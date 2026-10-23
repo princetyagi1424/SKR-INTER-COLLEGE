@@ -1,5 +1,5 @@
 // ============================================================
-// S.K.R. INTER COLLEGE & PVT ITI — Database Schema
+// S.K.R. INTER COLLEGE & PVT ITI — Database Schema (MongoDB)
 // Complete ERP + LMS data model
 // ============================================================
 
@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -167,10 +167,8 @@ enum DivisionType {
   OTHER
 }
 
-// -------------------- CORE SETTINGS --------------------
-
 model SchoolSetting {
-  id                String   @id @default(cuid())
+  id                String   @id @default(cuid()) @map("_id")
   schoolName        String   @default("S.K.R. INTER COLLEGE & PVT ITI")
   schoolNameHindi   String?
   tagline           String?
@@ -190,23 +188,21 @@ model SchoolSetting {
   upmspCode         String?
   logoUrl           String?
   faviconUrl        String?
-  principalMessage  String?  @db.Text
-  vision            String?  @db.Text
-  mission           String?  @db.Text
+  principalMessage  String?
+  vision            String?
+  mission           String?
   workingHours      String?
   academicSessionId String?
   establishedYear   Int?
-  affiliationInfo   String?  @db.Text
+  affiliationInfo   String?
   primaryColor      String   @default("#1e3a5f")
   accentColor       String   @default("#c9a227")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
 
-// -------------------- USERS & AUTH --------------------
-
 model User {
-  id                String     @id @default(cuid())
+  id                String     @id @default(cuid()) @map("_id")
   email             String?    @unique
   phone             String?    @unique
   passwordHash      String
@@ -240,7 +236,7 @@ model User {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(cuid()) @map("_id")
   userId       String
   token        String   @unique
   expiresAt    DateTime
@@ -257,7 +253,7 @@ model Session {
 }
 
 model PasswordReset {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   userId    String
   token     String   @unique
   expiresAt DateTime
@@ -270,7 +266,7 @@ model PasswordReset {
 }
 
 model AuditLog {
-  id         String   @id @default(cuid())
+  id         String   @id @default(cuid()) @map("_id")
   actorId    String?
   action     String
   entityType String
@@ -286,11 +282,9 @@ model AuditLog {
   @@index([createdAt])
 }
 
-// -------------------- ACADEMIC STRUCTURE --------------------
-
 model AcademicSession {
-  id          String    @id @default(cuid())
-  name        String    // e.g. "2025-26"
+  id          String    @id @default(cuid()) @map("_id")
+  name        String
   startDate   DateTime
   endDate     DateTime
   isCurrent   Boolean   @default(false)
@@ -310,8 +304,8 @@ model AcademicSession {
 }
 
 model Division {
-  id          String       @id @default(cuid())
-  name        String       // e.g. "Inter College", "Private ITI"
+  id          String       @id @default(cuid()) @map("_id")
+  name        String
   nameHindi  String?
   type        DivisionType @default(INTER_COLLEGE)
   description String?
@@ -323,10 +317,10 @@ model Division {
 }
 
 model Class {
-  id                String   @id @default(cuid())
-  name              String   // e.g. "Class 11", "Class 12", "ITI Electrician"
+  id                String   @id @default(cuid()) @map("_id")
+  name              String
   nameHindi        String?
-  numericLevel      Int?     // 9, 10, 11, 12 for ordering
+  numericLevel      Int?
   divisionId        String?
   academicSessionId String
   capacity          Int?
@@ -349,8 +343,8 @@ model Class {
 }
 
 model Section {
-  id          String   @id @default(cuid())
-  name        String   // A, B, C
+  id          String   @id @default(cuid()) @map("_id")
+  name        String
   classId     String
   capacity    Int?
   classTeacherId String?
@@ -369,7 +363,7 @@ model Section {
 }
 
 model Subject {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   name        String
   nameHindi  String?
   code        String?
@@ -391,10 +385,8 @@ model Subject {
   @@index([classId])
 }
 
-// -------------------- STUDENTS & GUARDIANS --------------------
-
 model Student {
-  id              String   @id @default(cuid())
+  id              String   @id @default(cuid()) @map("_id")
   userId          String?  @unique
   admissionNumber String   @unique
   firstName       String
@@ -404,7 +396,7 @@ model Student {
   dateOfBirth     DateTime?
   gender          Gender?
   bloodGroup      String?
-  aadhaarLast4    String?  // never store full Aadhaar
+  aadhaarLast4    String?
   photoUrl        String?
   address         String?
   city            String?
@@ -412,7 +404,7 @@ model Student {
   pinCode         String?
   phone           String?
   email           String?
-  category        String?  // General, OBC, SC, ST etc.
+  category        String?
   religion        String?
   nationality     String?  @default("Indian")
   previousSchool  String?
@@ -437,7 +429,7 @@ model Student {
 }
 
 model Parent {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   userId      String?  @unique
   firstName   String
   lastName    String?
@@ -445,7 +437,7 @@ model Parent {
   email       String?
   occupation  String?
   address     String?
-  relation    String?  // Father, Mother, Guardian
+  relation    String?
   isPrimary   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -455,10 +447,10 @@ model Parent {
 }
 
 model StudentGuardian {
-  id          String  @id @default(cuid())
+  id          String  @id @default(cuid()) @map("_id")
   studentId   String
   parentId    String
-  relation    String  // Father, Mother, Guardian
+  relation    String
   isPrimary   Boolean @default(false)
   canPickup   Boolean @default(true)
   createdAt   DateTime @default(now())
@@ -472,7 +464,7 @@ model StudentGuardian {
 }
 
 model Enrollment {
-  id                String           @id @default(cuid())
+  id                String           @id @default(cuid()) @map("_id")
   studentId         String
   classId           String
   sectionId         String?
@@ -497,10 +489,8 @@ model Enrollment {
   @@index([status])
 }
 
-// -------------------- STAFF & TEACHERS --------------------
-
 model Staff {
-  id              String   @id @default(cuid())
+  id              String   @id @default(cuid()) @map("_id")
   userId          String?  @unique
   employeeId      String   @unique
   firstName       String
@@ -511,7 +501,7 @@ model Staff {
   phone           String?
   email           String?
   photoUrl        String?
-  qualifications  String?  @db.Text
+  qualifications  String?
   isTeaching      Boolean  @default(false)
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
@@ -527,7 +517,7 @@ model Staff {
 }
 
 model TeacherSubject {
-  id        String @id @default(cuid())
+  id        String @id @default(cuid()) @map("_id")
   staffId   String
   subjectId String
   classId   String?
@@ -543,9 +533,9 @@ model TeacherSubject {
 }
 
 model StaffAttendance {
-  id        String           @id @default(cuid())
+  id        String           @id @default(cuid()) @map("_id")
   staffId   String
-  date      DateTime         @db.Date
+  date      DateTime
   status    AttendanceStatus
   remarks   String?
   recordedBy String?
@@ -559,12 +549,12 @@ model StaffAttendance {
 }
 
 model LeaveRequest {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   staffId     String
-  fromDate    DateTime @db.Date
-  toDate      DateTime @db.Date
+  fromDate    DateTime
+  toDate      DateTime
   reason      String?
-  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  status      String   @default("PENDING")
   approvedBy  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -575,14 +565,12 @@ model LeaveRequest {
   @@index([status])
 }
 
-// -------------------- ATTENDANCE --------------------
-
 model Attendance {
-  id                String           @id @default(cuid())
+  id                String           @id @default(cuid()) @map("_id")
   studentId         String
   sectionId         String
   academicSessionId String
-  date              DateTime         @db.Date
+  date              DateTime
   status            AttendanceStatus
   remarks           String?
   recordedById      String?
@@ -599,14 +587,12 @@ model Attendance {
   @@index([academicSessionId, date])
 }
 
-// -------------------- TIMETABLE --------------------
-
 model Timetable {
-  id                String   @id @default(cuid())
+  id                String   @id @default(cuid()) @map("_id")
   classId           String
   sectionId         String?
   academicSessionId String
-  dayOfWeek         Int      // 0=Sun ... 6=Sat
+  dayOfWeek         Int
   effectiveFrom     DateTime?
   effectiveTo       DateTime?
   isActive          Boolean  @default(true)
@@ -623,11 +609,11 @@ model Timetable {
 }
 
 model TimetableSlot {
-  id          String  @id @default(cuid())
+  id          String  @id @default(cuid()) @map("_id")
   timetableId String
   periodNumber Int
-  startTime   String  // "09:00"
-  endTime     String  // "09:45"
+  startTime   String
+  endTime     String
   subjectId   String?
   teacherId   String?
   room        String?
@@ -639,13 +625,11 @@ model TimetableSlot {
   @@index([timetableId])
 }
 
-// -------------------- EXAMINATIONS & RESULTS --------------------
-
 model Exam {
-  id                String     @id @default(cuid())
+  id                String     @id @default(cuid()) @map("_id")
   name              String
   nameHindi        String?
-  examType          String     // UNIT, PERIODIC, HALF_YEARLY, ANNUAL, PRE_BOARD
+  examType          String
   academicSessionId String
   classId           String
   startDate         DateTime?
@@ -654,7 +638,7 @@ model Exam {
   status            ExamStatus @default(DRAFT)
   maxMarksTotal     Int?
   passingPercentage Float?     @default(33)
-  instructions      String?    @db.Text
+  instructions      String?
   createdById       String?
   approvedById      String?
   publishedAt       DateTime?
@@ -672,7 +656,7 @@ model Exam {
 }
 
 model ExamSubject {
-  id            String  @id @default(cuid())
+  id            String  @id @default(cuid()) @map("_id")
   examId        String
   subjectId     String
   maxTheory     Int     @default(0)
@@ -690,7 +674,7 @@ model ExamSubject {
 }
 
 model Mark {
-  id            String      @id @default(cuid())
+  id            String      @id @default(cuid()) @map("_id")
   examId        String
   studentId     String
   subjectId     String
@@ -719,7 +703,7 @@ model Mark {
 }
 
 model ReportCard {
-  id              String   @id @default(cuid())
+  id              String   @id @default(cuid()) @map("_id")
   examId          String
   studentId       String
   version         Int      @default(1)
@@ -727,11 +711,11 @@ model ReportCard {
   totalMaximum    Float?
   percentage      Float?
   overallGrade    String?
-  resultStatus    String?  // PASS, FAIL, COMPARTMENT
+  resultStatus    String?
   attendanceDays  Int?
   attendanceTotal Int?
-  teacherRemarks  String?  @db.Text
-  principalRemarks String? @db.Text
+  teacherRemarks  String?
+  principalRemarks String?
   publishedAt     DateTime?
   documentId      String?  @unique
   pdfUrl          String?
@@ -750,7 +734,7 @@ model ReportCard {
 }
 
 model MarkCorrection {
-  id            String   @id @default(cuid())
+  id            String   @id @default(cuid()) @map("_id")
   markId        String
   field         String
   oldValue      String?
@@ -764,10 +748,8 @@ model MarkCorrection {
   @@index([markId])
 }
 
-// -------------------- FEES --------------------
-
 model FeePlan {
-  id                String   @id @default(cuid())
+  id                String   @id @default(cuid()) @map("_id")
   name              String
   academicSessionId String
   classId           String?
@@ -787,7 +769,7 @@ model FeePlan {
 }
 
 model FeeInvoice {
-  id            String    @id @default(cuid())
+  id            String    @id @default(cuid()) @map("_id")
   studentId     String
   feePlanId     String?
   invoiceNumber String    @unique
@@ -813,7 +795,7 @@ model FeeInvoice {
 }
 
 model Payment {
-  id              String        @id @default(cuid())
+  id              String        @id @default(cuid()) @map("_id")
   invoiceId       String
   amount          Float
   method          PaymentMethod
@@ -835,12 +817,10 @@ model Payment {
   @@index([transactionRef])
 }
 
-// -------------------- LMS: ASSIGNMENTS --------------------
-
 model Assignment {
-  id          String           @id @default(cuid())
+  id          String           @id @default(cuid()) @map("_id")
   title       String
-  description String?          @db.Text
+  description String?
   classId     String
   sectionId   String?
   subjectId   String?
@@ -862,15 +842,15 @@ model Assignment {
 }
 
 model Submission {
-  id           String           @id @default(cuid())
+  id           String           @id @default(cuid()) @map("_id")
   assignmentId String
   studentId    String
-  content      String?          @db.Text
+  content      String?
   attachmentUrl String?
   submittedAt  DateTime?
   status       SubmissionStatus @default(PENDING)
   marks        Float?
-  feedback     String?          @db.Text
+  feedback     String?
   gradedAt     DateTime?
   gradedById   String?
   createdAt    DateTime         @default(now())
@@ -883,14 +863,12 @@ model Submission {
   @@index([studentId])
 }
 
-// -------------------- NOTICES & EVENTS --------------------
-
 model Notice {
-  id                String         @id @default(cuid())
+  id                String         @id @default(cuid()) @map("_id")
   title             String
   titleHindi       String?
-  content           String         @db.Text
-  contentHindi      String?        @db.Text
+  content           String
+  contentHindi      String?
   priority          NoticePriority @default(NORMAL)
   audience          NoticeAudience @default(PUBLIC)
   classId           String?
@@ -911,9 +889,9 @@ model Notice {
 }
 
 model Event {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   title       String
-  description String?  @db.Text
+  description String?
   startDate   DateTime
   endDate     DateTime?
   location    String?
@@ -924,12 +902,12 @@ model Event {
 }
 
 model GalleryItem {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   title       String?
   caption     String?
   category    String?
   mediaUrl    String
-  mediaType   String   @default("image") // image, video
+  mediaType   String   @default("image")
   eventDate   DateTime?
   isPublished Boolean  @default(false)
   createdById String?
@@ -939,10 +917,8 @@ model GalleryItem {
   @@index([isPublished, category])
 }
 
-// -------------------- LIBRARY --------------------
-
 model LibraryBook {
-  id            String   @id @default(cuid())
+  id            String   @id @default(cuid()) @map("_id")
   title         String
   author        String?
   isbn          String?
@@ -964,7 +940,7 @@ model LibraryBook {
 }
 
 model LibraryIssue {
-  id          String    @id @default(cuid())
+  id          String    @id @default(cuid()) @map("_id")
   bookId      String
   studentId   String?
   staffId     String?
@@ -972,7 +948,7 @@ model LibraryIssue {
   dueDate     DateTime
   returnedAt  DateTime?
   fineAmount  Float     @default(0)
-  status      String    @default("ISSUED") // ISSUED, RETURNED, OVERDUE, LOST
+  status      String    @default("ISSUED")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -983,10 +959,8 @@ model LibraryIssue {
   @@index([status])
 }
 
-// -------------------- CERTIFICATES --------------------
-
 model Certificate {
-  id              String       @id @default(cuid())
+  id              String       @id @default(cuid()) @map("_id")
   studentId       String
   type            DocumentType
   serialNumber    String       @unique
@@ -994,7 +968,7 @@ model Certificate {
   content         Json?
   issuedAt        DateTime?
   issuedById      String?
-  status          String       @default("DRAFT") // DRAFT, APPROVED, ISSUED, CANCELLED
+  status          String       @default("DRAFT")
   pdfUrl          String?
   cancelledAt     DateTime?
   cancelReason    String?
@@ -1008,11 +982,9 @@ model Certificate {
   @@index([serialNumber])
 }
 
-// -------------------- IMPORT JOBS --------------------
-
 model ImportJob {
-  id            String          @id @default(cuid())
-  type          String          // STUDENTS, STAFF, MARKS, FEES
+  id            String          @id @default(cuid()) @map("_id")
+  type          String
   status        ImportJobStatus @default(PENDING)
   fileName      String?
   filePath      String?
@@ -1034,10 +1006,8 @@ model ImportJob {
   @@index([createdById])
 }
 
-// -------------------- NOTIFICATIONS --------------------
-
 model Notification {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   userId    String
   title     String
   body      String?
@@ -1051,10 +1021,8 @@ model Notification {
   @@index([userId, isRead])
 }
 
-// -------------------- ADMISSIONS --------------------
-
 model AdmissionApplication {
-  id              String   @id @default(cuid())
+  id              String   @id @default(cuid()) @map("_id")
   applicationNo   String   @unique
   studentName     String
   dateOfBirth     DateTime?
@@ -1066,12 +1034,12 @@ model AdmissionApplication {
   address         String?
   applyingClass   String?
   previousSchool  String?
-  status          String   @default("SUBMITTED") // SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED, ENROLLED
+  status          String   @default("SUBMITTED")
   documents       Json?
   remarks         String?
   reviewedById    String?
   reviewedAt      DateTime?
-  studentId       String?  // linked after enrollment
+  studentId       String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
