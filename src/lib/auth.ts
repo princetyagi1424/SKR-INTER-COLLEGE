@@ -64,6 +64,7 @@ export async function getSession(): Promise<SessionUser | null> {
     const { payload } = await jwtVerify(jwt, JWT_SECRET);
     const userId = payload.sub as string;
     const sessionToken = payload.sid as string;
+    if (!userId || !sessionToken) return null;
 
     const session = await prisma.session.findFirst({
       where: {
@@ -88,9 +89,22 @@ export async function getSession(): Promise<SessionUser | null> {
       },
     });
 
-    if (!session || session.user.status !== UserStatus.ACTIVE) return null;
-    return session.user;
-  } catch {
+    if (!session?.user) return null;
+    if (session.user.status !== UserStatus.ACTIVE && session.user.status !== "ACTIVE") {
+      return null;
+    }
+
+    return {
+      id: session.user.id,
+      email: session.user.email,
+      phone: session.user.phone,
+      role: session.user.role,
+      firstName: session.user.firstName,
+      lastName: session.user.lastName,
+      displayName: session.user.displayName,
+    };
+  } catch (err) {
+    console.error("[getSession] error:", err instanceof Error ? err.message : err);
     return null;
   }
 }
