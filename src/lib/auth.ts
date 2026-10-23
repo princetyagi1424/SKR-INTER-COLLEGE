@@ -28,7 +28,19 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-export async function createSession(userId: string, ip?: string, ua?: string) {
+export async function createSession(
+  userId: string,
+  ip?: string,
+  ua?: string,
+  userClaims?: {
+    email: string | null;
+    phone: string | null;
+    role: Role;
+    firstName: string;
+    lastName: string | null;
+    displayName: string | null;
+  }
+) {
   const token = crypto.randomUUID() + "-" + crypto.randomUUID();
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + SESSION_DAYS);
@@ -37,7 +49,16 @@ export async function createSession(userId: string, ip?: string, ua?: string) {
     data: { userId, token, expiresAt, ipAddress: ip, userAgent: ua },
   });
 
-  const jwt = await new SignJWT({ sub: userId, sid: token })
+  const jwt = await new SignJWT({
+    sub: userId,
+    sid: token,
+    role: userClaims?.role,
+    email: userClaims?.email ?? undefined,
+    phone: userClaims?.phone ?? undefined,
+    firstName: userClaims?.firstName,
+    lastName: userClaims?.lastName ?? undefined,
+    displayName: userClaims?.displayName ?? undefined,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(`${SESSION_DAYS}d`)
     .setIssuedAt()
@@ -66,6 +87,37 @@ export async function getSession(): Promise<SessionUser | null> {
     const sessionToken = payload.sid as string;
     if (!userId || !sessionToken) return null;
 
+    // Fast path: use claims embedded in JWT (works even if DB is slow)
+    if (payload.role && payload.firstName) {
+      // Best-effort: confirm session not revoked (ignore DB errors)
+      try {
+        const alive = await prisma.session.findFirst({
+          where: {
+            token: sessionToken,
+            userId,
+            expiresAt: { gt: new Date() },
+            revokedAt: null,
+          },
+          select: { id: true },
+        });
+        if (!alive) return null;
+      } catch (dbErr) {
+        console.error("[getSession] DB check failed, trusting JWT claims:", dbErr);
+        // Fall through and trust JWT if DB is unreachable
+      }
+
+      return {
+        id: userId,
+        email: (payload.email as string) || null,
+        phone: (payload.phone as string) || null,
+        role: payload.role as Role,
+        firstName: payload.firstName as string,
+        lastName: (payload.lastName as string) || null,
+        displayName: (payload.displayName as string) || null,
+      };
+    }
+
+    // Legacy path: full DB lookup
     const session = await prisma.session.findFirst({
       where: {
         token: sessionToken,
