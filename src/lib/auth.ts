@@ -90,9 +90,7 @@ export async function getSession(): Promise<SessionUser | null> {
     });
 
     if (!session?.user) return null;
-    if (session.user.status !== UserStatus.ACTIVE && session.user.status !== "ACTIVE") {
-      return null;
-    }
+    if (session.user.status !== UserStatus.ACTIVE) return null;
 
     return {
       id: session.user.id,
