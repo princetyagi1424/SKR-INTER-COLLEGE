@@ -130,7 +130,6 @@ export class AuthError extends Error {
   }
 }
 
-/** Role hierarchy helpers */
 export const ADMIN_ROLES: Role[] = [
   Role.SUPER_ADMIN,
   Role.PRINCIPAL,
