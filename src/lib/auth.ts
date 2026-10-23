@@ -148,18 +148,42 @@ export const STAFF_ROLES: Role[] = [
   Role.STAFF,
 ];
 
-export function canManageStudents(role: Role) {
-  return [Role.SUPER_ADMIN, Role.PRINCIPAL, Role.SCHOOL_ADMIN, Role.ADMISSION_OFFICER].includes(role);
+export function canManageStudents(role: Role): boolean {
+  const allowed: Role[] = [
+    Role.SUPER_ADMIN,
+    Role.PRINCIPAL,
+    Role.SCHOOL_ADMIN,
+    Role.ADMISSION_OFFICER,
+  ];
+  return allowed.includes(role);
 }
 
-export function canEnterMarks(role: Role) {
-  return [Role.SUPER_ADMIN, Role.PRINCIPAL, Role.SCHOOL_ADMIN, Role.TEACHER, Role.EXAM_CONTROLLER].includes(role);
+export function canEnterMarks(role: Role): boolean {
+  const allowed: Role[] = [
+    Role.SUPER_ADMIN,
+    Role.PRINCIPAL,
+    Role.SCHOOL_ADMIN,
+    Role.TEACHER,
+    Role.EXAM_CONTROLLER,
+  ];
+  return allowed.includes(role);
 }
 
-export function canPublishResults(role: Role) {
-  return [Role.SUPER_ADMIN, Role.PRINCIPAL, Role.EXAM_CONTROLLER].includes(role);
+export function canPublishResults(role: Role): boolean {
+  const allowed: Role[] = [
+    Role.SUPER_ADMIN,
+    Role.PRINCIPAL,
+    Role.EXAM_CONTROLLER,
+  ];
+  return allowed.includes(role);
 }
 
-export function canManageFees(role: Role) {
-  return [Role.SUPER_ADMIN, Role.PRINCIPAL, Role.SCHOOL_ADMIN, Role.ACCOUNTANT].includes(role);
+export function canManageFees(role: Role): boolean {
+  const allowed: Role[] = [
+    Role.SUPER_ADMIN,
+    Role.PRINCIPAL,
+    Role.SCHOOL_ADMIN,
+    Role.ACCOUNTANT,
+  ];
+  return allowed.includes(role);
 }
