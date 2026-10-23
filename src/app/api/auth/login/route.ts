@@ -32,22 +32,34 @@ export async function POST(req: NextRequest) {
 
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || undefined;
     const ua = req.headers.get("user-agent") || undefined;
-    await createSession(user.id, ip, ua);
+
+    await createSession(user.id, ip, ua, {
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      displayName: user.displayName,
+    });
 
     await prisma.user.update({
       where: { id: user.id },
       data: { lastLoginAt: new Date() },
     });
 
-    await prisma.auditLog.create({
-      data: {
-        actorId: user.id,
-        action: "LOGIN",
-        entityType: "User",
-        entityId: user.id,
-        ipAddress: ip,
-      },
-    });
+    try {
+      await prisma.auditLog.create({
+        data: {
+          actorId: user.id,
+          action: "LOGIN",
+          entityType: "User",
+          entityId: user.id,
+          ipAddress: ip,
+        },
+      });
+    } catch {
+      /* non-critical */
+    }
 
     return NextResponse.json({
       user: {
@@ -66,12 +78,13 @@ export async function POST(req: NextRequest) {
       msg.includes("DNS") ||
       msg.includes("PrismaClientInitializationError") ||
       msg.includes("Can't reach") ||
-      msg.includes("connection")
+      msg.includes("connection") ||
+      msg.includes("Server selection timeout")
     ) {
       return NextResponse.json(
         {
           error:
-            "Database connection failed. Please check DATABASE_URL in Vercel environment variables (MongoDB Atlas URI must be a real cluster hostname).",
+            "Database connection failed. Please check MongoDB Atlas Network Access (allow 0.0.0.0/0) and DATABASE_URL.",
         },
         { status: 503 }
       );
