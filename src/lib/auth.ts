@@ -45,9 +45,13 @@ export async function createSession(
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + SESSION_DAYS);
 
-  await prisma.session.create({
-    data: { userId, token, expiresAt, ipAddress: ip, userAgent: ua },
-  });
+  try {
+    await prisma.session.create({
+      data: { userId, token, expiresAt, ipAddress: ip, userAgent: ua },
+    });
+  } catch (e) {
+    console.error("[createSession] session row failed (non-fatal):", e);
+  }
 
   const jwt = await new SignJWT({
     sub: userId,
@@ -84,40 +88,25 @@ export async function getSession(): Promise<SessionUser | null> {
   try {
     const { payload } = await jwtVerify(jwt, JWT_SECRET);
     const userId = payload.sub as string;
-    const sessionToken = payload.sid as string;
-    if (!userId || !sessionToken) return null;
+    if (!userId) return null;
 
-    // Fast path: use claims embedded in JWT (works even if DB is slow)
-    if (payload.role && payload.firstName) {
-      // Best-effort: confirm session not revoked (ignore DB errors)
-      try {
-        const alive = await prisma.session.findFirst({
-          where: {
-            token: sessionToken,
-            userId,
-            expiresAt: { gt: new Date() },
-            revokedAt: null,
-          },
-          select: { id: true },
-        });
-        if (!alive) return null;
-      } catch (dbErr) {
-        console.error("[getSession] DB check failed, trusting JWT claims:", dbErr);
-        // Fall through and trust JWT if DB is unreachable
-      }
-
+    // Prefer claims embedded in JWT (no DB round-trip needed)
+    if (payload.role && typeof payload.firstName === "string") {
       return {
         id: userId,
-        email: (payload.email as string) || null,
-        phone: (payload.phone as string) || null,
+        email: typeof payload.email === "string" ? payload.email : null,
+        phone: typeof payload.phone === "string" ? payload.phone : null,
         role: payload.role as Role,
-        firstName: payload.firstName as string,
-        lastName: (payload.lastName as string) || null,
-        displayName: (payload.displayName as string) || null,
+        firstName: payload.firstName,
+        lastName: typeof payload.lastName === "string" ? payload.lastName : null,
+        displayName: typeof payload.displayName === "string" ? payload.displayName : null,
       };
     }
 
-    // Legacy path: full DB lookup
+    // Legacy tokens: load from DB
+    const sessionToken = payload.sid as string;
+    if (!sessionToken) return null;
+
     const session = await prisma.session.findFirst({
       where: {
         token: sessionToken,
@@ -166,10 +155,12 @@ export async function destroySession() {
     try {
       const { payload } = await jwtVerify(jwt, JWT_SECRET);
       const sessionToken = payload.sid as string;
-      await prisma.session.updateMany({
-        where: { token: sessionToken },
-        data: { revokedAt: new Date() },
-      });
+      if (sessionToken) {
+        await prisma.session.updateMany({
+          where: { token: sessionToken },
+          data: { revokedAt: new Date() },
+        });
+      }
     } catch {
       /* ignore */
     }
