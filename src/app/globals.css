@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+:root {
+  --color-navy: #1e3a5f;
+  --color-navy-dark: #0f2744;
+  --color-navy-light: #2a4a73;
+  --color-gold: #c9a227;
+  --color-gold-light: #e0c04a;
+  --color-cream: #f8f6f1;
+  --color-success: #15803d;
+  --color-danger: #b91c1c;
+  --color-warning: #b45309;
+}
+
+@theme inline {
+  --color-primary: var(--color-navy);
+  --color-primary-foreground: #ffffff;
+  --color-accent: var(--color-gold);
+  --color-background: #ffffff;
+  --color-muted: #f1f5f9;
+  --font-sans: "Inter", "Noto Sans Devanagari", system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #ffffff;
+  color: #0f172a;
+}
+
+/* Hindi-friendly */
+.font-hindi {
+  font-family: "Noto Sans Devanagari", "Inter", system-ui, sans-serif;
+}
+
+/* Print styles for report cards */
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+}
