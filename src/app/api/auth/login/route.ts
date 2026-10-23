@@ -13,13 +13,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email/phone and password are required" }, { status: 400 });
     }
 
-    // Rate limiting hint: in production use Redis or middleware
     const user = await prisma.user.findFirst({
       where: {
-        OR: [
-          { email: identifier },
-          { phone: identifier },
-        ],
+        OR: [{ email: identifier }, { phone: identifier }],
       },
     });
 
@@ -28,7 +24,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (user.status !== UserStatus.ACTIVE) {
-      return NextResponse.json({ error: "Account is not active. Contact the school office." }, { status: 403 });
+      return NextResponse.json(
+        { error: "Account is not active. Contact the school office." },
+        { status: 403 }
+      );
     }
 
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || undefined;
@@ -59,8 +58,24 @@ export async function POST(req: NextRequest) {
         displayName: user.displayName,
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Login error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    if (
+      msg.includes("database") ||
+      msg.includes("DNS") ||
+      msg.includes("PrismaClientInitializationError") ||
+      msg.includes("Can't reach") ||
+      msg.includes("connection")
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Database connection failed. Please check DATABASE_URL in Vercel environment variables (MongoDB Atlas URI must be a real cluster hostname).",
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
