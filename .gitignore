@@ -50,13 +50,3 @@ next-env.d.ts
 .idea
 .vscode
 *.swp
-.env
-.env.*
-!.env.example
-node_modules/
-.next/
-.env
-.env.*
-!.env.example
-node_modules/
-.next/
