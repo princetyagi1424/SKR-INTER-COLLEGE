@@ -22,29 +22,134 @@ enum Role {
   TRANSPORT_MANAGER
   STAFF
 }
-enum UserStatus { PENDING ACTIVE SUSPENDED DEACTIVATED }
-enum Gender { MALE FEMALE OTHER }
-enum EnrollmentStatus { APPLIED ADMITTED ENROLLED PROMOTED RETAINED TRANSFERRED WITHDRAWN ALUMNI }
-enum AttendanceStatus { PRESENT ABSENT LATE LEAVE HALF_DAY HOLIDAY }
-enum ExamStatus { DRAFT SCHEDULED ONGOING MARKS_ENTRY UNDER_REVIEW APPROVED PUBLISHED ARCHIVED }
-enum MarksStatus { DRAFT SUBMITTED RETURNED APPROVED PUBLISHED }
-enum FeeStatus { PENDING PARTIAL PAID OVERDUE WAIVED CANCELLED }
-enum PaymentMethod { CASH CHEQUE BANK_TRANSFER UPI CARD NET_BANKING GATEWAY }
-enum PaymentStatus { INITIATED PENDING SUCCESS FAILED REFUNDED CANCELLED }
-enum NoticePriority { LOW NORMAL HIGH URGENT }
-enum NoticeAudience { PUBLIC STUDENTS PARENTS TEACHERS STAFF ALL }
-enum ImportJobStatus { PENDING VALIDATING PREVIEW PROCESSING COMPLETED FAILED CANCELLED }
-enum AssignmentStatus { DRAFT PUBLISHED CLOSED }
-enum SubmissionStatus { PENDING SUBMITTED LATE GRADED RETURNED }
-enum DocumentType { TRANSFER_CERTIFICATE BONAFIDE CHARACTER STUDY FEE_RECEIPT ID_CARD ADMIT_CARD OTHER }
-enum DivisionType { INTER_COLLEGE ITI OTHER }
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+enum EnrollmentStatus {
+  APPLIED
+  ADMITTED
+  ENROLLED
+  PROMOTED
+  RETAINED
+  TRANSFERRED
+  WITHDRAWN
+  ALUMNI
+}
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  LEAVE
+  HALF_DAY
+  HOLIDAY
+}
+enum ExamStatus {
+  DRAFT
+  SCHEDULED
+  ONGOING
+  MARKS_ENTRY
+  UNDER_REVIEW
+  APPROVED
+  PUBLISHED
+  ARCHIVED
+}
+enum MarksStatus {
+  DRAFT
+  SUBMITTED
+  RETURNED
+  APPROVED
+  PUBLISHED
+}
+enum FeeStatus {
+  PENDING
+  PARTIAL
+  PAID
+  OVERDUE
+  WAIVED
+  CANCELLED
+}
+enum PaymentMethod {
+  CASH
+  CHEQUE
+  BANK_TRANSFER
+  UPI
+  CARD
+  NET_BANKING
+  GATEWAY
+}
+enum PaymentStatus {
+  INITIATED
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+enum NoticePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+enum NoticeAudience {
+  PUBLIC
+  STUDENTS
+  PARENTS
+  TEACHERS
+  STAFF
+  ALL
+}
+enum ImportJobStatus {
+  PENDING
+  VALIDATING
+  PREVIEW
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+enum AssignmentStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+enum SubmissionStatus {
+  PENDING
+  SUBMITTED
+  LATE
+  GRADED
+  RETURNED
+}
+enum DocumentType {
+  TRANSFER_CERTIFICATE
+  BONAFIDE
+  CHARACTER
+  STUDY
+  FEE_RECEIPT
+  ID_CARD
+  ADMIT_CARD
+  OTHER
+}
+enum DivisionType {
+  INTER_COLLEGE
+  ITI
+  OTHER
+}
 
 model SchoolSetting {
   id                String   @id @default(cuid()) @map("_id")
   schoolName        String   @default("S.K.R. INTER COLLEGE & PVT ITI")
   schoolNameHindi   String?
   tagline           String?
-  address           String   @default("Udaypur Khalsa, Post Bhadrauli, Bah, Pinahat, Agra, Uttar Pradesh, India — PIN 283113")
+  address           String   @default("Udaypur Khalsa, Post Bhadrauli, Bah, Pinahat, Agra, Uttar Pradesh, India - PIN 283113")
   pinCode           String   @default("283113")
   city              String   @default("Agra")
   state             String   @default("Uttar Pradesh")
@@ -67,8 +172,8 @@ model SchoolSetting {
   academicSessionId String?
   establishedYear   Int?
   affiliationInfo   String?
-  primaryColor      String   @default("#1e3a5f")
-  accentColor       String   @default("#c9a227")
+  primaryColor      String   @default("1e3a5f")
+  accentColor       String   @default("c9a227")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
