@@ -19,7 +19,6 @@ export default function HomePage() {
       <PublicHeader />
 
       <main className="flex-1">
-        {/* Hero */}
         <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-navy-dark)] via-[var(--color-navy)] to-[var(--color-navy-light)] text-white">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-[var(--color-gold)] blur-3xl" />
@@ -32,7 +31,7 @@ export default function HomePage() {
               <h1 className="mb-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
                 S.K.R. INTER COLLEGE
                 <span className="block text-xl font-medium text-[var(--color-gold)] sm:text-2xl">
-                  &amp; Private ITI
+                  & Private ITI
                 </span>
               </h1>
               <p className="mb-8 text-base leading-relaxed text-white/80 sm:text-lg">
@@ -41,7 +40,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href="/admissions"
+                  href="/apply-now"
                   className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-gold)] px-6 py-3 text-sm font-semibold text-[var(--color-navy-dark)] transition hover:bg-[var(--color-gold-light)]"
                 >
                   Online Admission Enquiry
@@ -58,7 +57,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Quick links */}
         <section className="border-b bg-[var(--color-cream)]">
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-slate-200 sm:grid-cols-4">
             {[
@@ -79,7 +77,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* About teaser */}
         <section className="mx-auto max-w-7xl px-4 py-16">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
@@ -90,7 +87,7 @@ export default function HomePage() {
                 Building futures through quality education
               </h3>
               <p className="mb-4 leading-relaxed text-slate-600">
-                S.K.R. INTER COLLEGE &amp; PVT ITI is located at Udaypur Khalsa, Post Bhadrauli,
+                S.K.R. INTER COLLEGE & PVT ITI is located at Udaypur Khalsa, Post Bhadrauli,
                 Bah, Pinahat, Agra. The institution is committed to providing accessible,
                 value-based education to students from surrounding rural communities.
               </p>
@@ -126,7 +123,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA band */}
         <section className="bg-[var(--color-navy)] py-12 text-white">
           <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:flex-row">
             <div>
@@ -135,7 +131,7 @@ export default function HomePage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/admissions"
+                href="/apply-now"
                 className="rounded-lg bg-[var(--color-gold)] px-5 py-2.5 text-sm font-semibold text-[var(--color-navy-dark)] hover:bg-[var(--color-gold-light)]"
               >
                 Admission Enquiry
