@@ -19,7 +19,6 @@ export function PublicHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--color-navy)] text-white shadow-md">
-      {/* Top bar */}
       <div className="hidden border-b border-white/10 bg-[var(--color-navy-dark)] px-4 py-1.5 text-xs sm:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-4">
@@ -43,7 +42,6 @@ export function PublicHeader() {
         </div>
       </div>
 
-      {/* Main nav */}
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-gold)] text-lg font-bold text-[var(--color-navy-dark)]">
@@ -52,7 +50,7 @@ export function PublicHeader() {
           <div className="leading-tight">
             <div className="text-base font-bold tracking-wide sm:text-lg">S.K.R. INTER COLLEGE</div>
             <div className="text-[10px] font-medium uppercase tracking-wider text-[var(--color-gold)] sm:text-xs">
-              &amp; Private ITI
+              & Private ITI
             </div>
           </div>
         </Link>
@@ -68,7 +66,7 @@ export function PublicHeader() {
             </Link>
           ))}
           <Link
-            href="/admissions"
+            href="/apply-now"
             className="ml-2 rounded-md bg-[var(--color-gold)] px-4 py-2 text-sm font-semibold text-[var(--color-navy-dark)] transition hover:bg-[var(--color-gold-light)]"
           >
             Apply Now
@@ -85,7 +83,6 @@ export function PublicHeader() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="border-t border-white/10 bg-[var(--color-navy-dark)] px-4 py-3 lg:hidden">
           {NAV.map((item) => (
@@ -99,7 +96,7 @@ export function PublicHeader() {
             </Link>
           ))}
           <Link
-            href="/admissions"
+            href="/apply-now"
             className="mt-2 block rounded-md bg-[var(--color-gold)] px-3 py-2.5 text-center text-sm font-semibold text-[var(--color-navy-dark)]"
             onClick={() => setOpen(false)}
           >
