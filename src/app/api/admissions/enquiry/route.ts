@@ -5,17 +5,16 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const studentName = String(body.studentName || "").trim();
-    const guardianName = String(body.guardianName || "").trim();
+    const guardianName = String(body.guardianName || body.fatherName || "").trim();
     const phone = String(body.phone || "").trim().replace(/\s+/g, "");
     const email = String(body.email || "").trim().toLowerCase() || null;
-    const applyingClass = String(body.applyingClass || "").trim();
-    const academicSession = String(body.academicSession || "2025-26").trim();
+    const applyingClass = String(body.applyingClass || "").trim() || null;
     const address = String(body.address || "").trim() || null;
     const message = String(body.message || "").trim() || null;
 
-    if (!studentName || !guardianName || !phone || !applyingClass) {
+    if (!studentName || !phone) {
       return NextResponse.json(
-        { error: "Student name, guardian name, phone and class are required" },
+        { error: "Student name and phone are required" },
         { status: 400 }
       );
     }
@@ -29,13 +28,12 @@ export async function POST(req: NextRequest) {
       data: {
         applicationNo,
         studentName,
-        guardianName,
+        fatherName: guardianName || null,
         phone,
         email,
         applyingClass,
-        academicSession,
         address,
-        message,
+        remarks: message,
         status: "SUBMITTED",
       },
     });
