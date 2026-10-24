@@ -47,6 +47,10 @@ export default async function TeacherDashboard() {
             <div className="font-semibold text-[var(--color-navy)]">Assignments</div>
             <div className="text-xs text-slate-500">Homework & submissions</div>
           </Link>
+          <Link href="/teacher/leave" className="rounded-xl border bg-white p-4 shadow-sm hover:shadow-md">
+            <div className="font-semibold text-[var(--color-navy)]">Leave</div>
+            <div className="text-xs text-slate-500">Request leave</div>
+          </Link>
         </div>
 
         {staff && staff.teacherSubjects.length > 0 && (

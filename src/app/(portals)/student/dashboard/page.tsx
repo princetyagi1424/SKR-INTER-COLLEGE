@@ -137,6 +137,15 @@ export default async function StudentDashboard() {
             <Link href="/student/timetable" className="rounded-lg border bg-white px-4 py-3 text-sm hover:bg-slate-50">
               Timetable
             </Link>
+            <Link href="/student/fees" className="rounded-lg border bg-white px-4 py-3 text-sm hover:bg-slate-50">
+              Fees
+            </Link>
+            <Link href="/student/library" className="rounded-lg border bg-white px-4 py-3 text-sm hover:bg-slate-50">
+              Library
+            </Link>
+            <Link href="/student/certificates" className="rounded-lg border bg-white px-4 py-3 text-sm hover:bg-slate-50">
+              Certificates
+            </Link>
             <Link href="/notices" className="rounded-lg border bg-white px-4 py-3 text-sm hover:bg-slate-50">
               School Notices
             </Link>

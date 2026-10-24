@@ -161,6 +161,24 @@ export default async function AdminDashboard() {
             📢 Notices
           </Link>
           <Link
+            href="/admin/library"
+            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
+          >
+            Library
+          </Link>
+          <Link
+            href="/admin/certificates"
+            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
+          >
+            Certificates
+          </Link>
+          <Link
+            href="/admin/leave"
+            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
+          >
+            Staff leave
+          </Link>
+          <Link
             href="/admin/settings"
             className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
           >
