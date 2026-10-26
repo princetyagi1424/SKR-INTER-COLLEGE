@@ -41,8 +41,7 @@ export default function FacultyPage() {
                       alt={t.name}
                       className="h-full w-full object-cover object-top"
                       loading="lazy"
-                      referrerPolicy="no-referrer"
-                    />
+/>
                   ) : (
                     <div className="flex h-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-3xl font-bold text-slate-400">
                       {t.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
