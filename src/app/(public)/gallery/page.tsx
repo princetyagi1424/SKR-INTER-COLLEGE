@@ -36,8 +36,7 @@ export default function GalleryPage() {
                   alt={g.title}
                   className="aspect-[4/3] w-full object-cover"
                   loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
+/>
                 <figcaption className="px-4 py-3 text-sm font-medium text-slate-700">{g.title}</figcaption>
               </figure>
             ))}
