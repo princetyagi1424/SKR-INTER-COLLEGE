@@ -112,3 +112,26 @@ button, [role="button"] { cursor: pointer; }
   .no-print { display: none !important; }
   .print-only { display: block !important; }
 }
+
+
+/* Premium motion system */
+html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+body { -webkit-font-smoothing: antialiased; }
+::selection { background: #d5e9d9; color: #173c31; }
+.animate-rise { animation: rise-in .8s cubic-bezier(.2,.75,.25,1) both; }
+.animation-delay-100 { animation-delay: .1s; }
+.animation-delay-200 { animation-delay: .2s; }
+.animation-delay-300 { animation-delay: .3s; }
+.animate-float { animation: float-y 7s ease-in-out infinite; }
+.animate-drift { animation: drift 12s ease-in-out infinite alternate; }
+.animate-drift-delayed { animation: drift 15s ease-in-out 1s infinite alternate-reverse; }
+.animate-spin-slow { animation: spin-slow 24s linear infinite; }
+.reveal-on-view { animation: rise-in .7s cubic-bezier(.2,.75,.25,1) both; animation-timeline: view(); animation-range: entry 0% entry 25%; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes float-y { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-12px) rotate(.5deg); } }
+@keyframes drift { from { transform: translate3d(-12px,-8px,0) scale(.96); } to { transform: translate3d(26px,24px,0) scale(1.08); } }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-rise, .animate-float, .animate-drift, .animate-drift-delayed, .animate-spin-slow, .reveal-on-view { animation: none !important; }
+}
