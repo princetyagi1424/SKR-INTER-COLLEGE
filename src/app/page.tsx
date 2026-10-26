@@ -114,7 +114,7 @@ export default function HomePage() {
               const content = (
                 <>
                   <span className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-[var(--color-blue)]">
-                    <item.icon className="h-4.5 w-4.5" aria-hidden="true" />
+                    <item.icon className="h-4 w-4" aria-hidden="true" />
                   </span>
                   <span className="block text-sm font-extrabold text-[var(--color-navy)] sm:text-base">{item.label}</span>
                   <span className="mt-1 block text-[10px] leading-4 text-slate-500 sm:text-xs">{item.sub}</span>
