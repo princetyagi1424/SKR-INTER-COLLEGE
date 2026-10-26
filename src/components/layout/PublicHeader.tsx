@@ -44,18 +44,18 @@ export function PublicHeader() {
 
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-gold)] text-lg font-bold text-[var(--color-navy-dark)]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-gold)] text-lg font-bold text-[var(--color-navy-dark)]">
             SKR
           </div>
           <div className="leading-tight">
             <div className="text-base font-bold tracking-wide sm:text-lg">S.K.R. INTER COLLEGE</div>
-            <div className="text-[10px] font-medium uppercase tracking-wider text-[var(--color-gold)] sm:text-xs">
+            <div className="text-[10px] font-medium uppercase tracking-wider text-[var(--color-sky)] sm:text-xs">
               & Private ITI
             </div>
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -67,9 +67,9 @@ export function PublicHeader() {
           ))}
           <Link
             href="/apply-now"
-            className="ml-2 rounded-md bg-[var(--color-gold)] px-4 py-2 text-sm font-semibold text-[var(--color-navy-dark)] transition hover:bg-[var(--color-gold-light)]"
+            className="ml-2 rounded-lg bg-[var(--color-gold)] px-4 py-2 text-sm font-semibold text-[var(--color-navy-dark)] transition hover:bg-[var(--color-gold-light)]"
           >
-            Apply Now
+            Apply for Admission
           </Link>
         </nav>
 
@@ -77,14 +77,15 @@ export function PublicHeader() {
           type="button"
           className="rounded-md p-2 hover:bg-white/10 lg:hidden"
           onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-[var(--color-navy-dark)] px-4 py-3 lg:hidden">
+        <div className="border-t border-white/10 bg-[var(--color-navy-dark)] px-4 py-3 lg:hidden" role="dialog" aria-label="Mobile menu">
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -97,10 +98,10 @@ export function PublicHeader() {
           ))}
           <Link
             href="/apply-now"
-            className="mt-2 block rounded-md bg-[var(--color-gold)] px-3 py-2.5 text-center text-sm font-semibold text-[var(--color-navy-dark)]"
+            className="mt-2 block rounded-lg bg-[var(--color-gold)] px-3 py-2.5 text-center text-sm font-semibold text-[var(--color-navy-dark)]"
             onClick={() => setOpen(false)}
           >
-            Apply Now
+            Apply for Admission
           </Link>
           <Link
             href="/login"
