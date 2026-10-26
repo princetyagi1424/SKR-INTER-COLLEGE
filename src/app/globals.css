@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --color-navy: #0b3d91;
-  --color-navy-dark: #072a66;
-  --color-navy-light: #1a56b0;
-  --color-blue: #2563eb;
-  --color-sky: #38bdf8;
-  --color-teal: #10b981;
-  --color-green: #16a34a;
-  --color-gold: #f59e0b;
-  --color-gold-light: #fbbf24;
-  --color-coral: #f97316;
-  --color-purple: #7c3aed;
-  --color-cream: #f3f6fb;
-  --color-success: #15803d;
+  --color-navy: #173c31;
+  --color-navy-dark: #102720;
+  --color-navy-light: #245747;
+  --color-blue: #176b55;
+  --color-sky: #9ccfc0;
+  --color-teal: #2e8065;
+  --color-green: #34795a;
+  --color-gold: #f6d477;
+  --color-gold-light: #ffe49a;
+  --color-coral: #d98b65;
+  --color-purple: #8b789e;
+  --color-cream: #f7f8f5;
+  --color-success: #246747;
   --color-danger: #dc2626;
   --color-warning: #d97706;
   --color-text: #0f172a;
   --color-muted-text: #64748b;
-  --radius: 1rem;
-  --shadow-card: 0 4px 24px rgba(15, 23, 42, 0.06);
-  --shadow-soft: 0 10px 40px rgba(15, 23, 42, 0.08);
+  --radius: 1.25rem;
+  --shadow-card: 0 8px 28px rgba(18, 45, 34, 0.055);
+  --shadow-soft: 0 18px 55px rgba(18, 45, 34, 0.10);
 }
 
 @theme inline {
@@ -74,7 +74,7 @@ button, [role="button"] { cursor: pointer; }
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  background: var(--color-gold);
+  background: #f6d477;
   color: #0f172a;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
@@ -83,7 +83,7 @@ button, [role="button"] { cursor: pointer; }
   box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
 }
 .btn-primary:hover {
-  background: var(--color-gold-light);
+  background: #ffe49a;
   transform: translateY(-1px);
 }
 .btn-secondary {
