@@ -9,6 +9,7 @@ const NAV = [
   { href: "/about", label: "About" },
   { href: "/academics", label: "Academics" },
   { href: "/admissions", label: "Admissions" },
+  { href: "/faculty", label: "Faculty" },
   { href: "/notices", label: "Notices" },
   { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
@@ -27,7 +28,7 @@ export function PublicHeader() {
           <div className="leading-tight">
             <div className="text-sm font-bold text-slate-900 sm:text-base">S.K.R. INTER COLLEGE</div>
             <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-blue)]">
-              &amp; Private ITI · Agra
+              & Private ITI · Agra
             </div>
           </div>
         </Link>
