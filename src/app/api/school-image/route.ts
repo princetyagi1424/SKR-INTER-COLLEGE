@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     return new Response("Invalid school image name", { status: 400 });
   }
 
-  const source = new URL("https://upmsp.edu.in/Pehchan/GetImage.aspx");
+  const source = new URL("https://upmsp.edu.in/GetImage.aspx");
   source.searchParams.set("Class", imageClass);
   source.searchParams.set("Dist", imageClass === "S" ? "01" : "011424");
   source.searchParams.set("ImageName", name);
