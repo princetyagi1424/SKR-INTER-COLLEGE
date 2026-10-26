@@ -170,7 +170,7 @@ export default async function AdminDashboard() {
               <div className="min-w-0">
                 <div className="truncate font-medium text-slate-800">{n.title}</div>
                 <div className="text-xs text-slate-500">
-                  {n.publishedAt ? new Date(n.publishedAt).toLocaleDateString("en-IN") : ""}
+                  {n.publishAt ? new Date(n.publishAt).toLocaleDateString("en-IN") : ""}
                 </div>
               </div>
               <Link href="/admin/notices" className="shrink-0 text-xs font-semibold text-emerald-600 hover:underline">
