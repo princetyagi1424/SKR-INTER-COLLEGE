@@ -3,6 +3,13 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Role } from "@prisma/client";
+import { PortalShell } from "@/components/portal/PortalShell";
+
+const NAV = [
+  { href: "/parent/dashboard", label: "My children" },
+  { href: "/notices", label: "Notices" },
+  { href: "/contact", label: "Contact school" },
+];
 
 export default async function ParentDashboard() {
   const user = await getSession();
@@ -35,68 +42,63 @@ export default async function ParentDashboard() {
   const children = parent?.children.map((c) => c.student) || [];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-[var(--color-navy)] text-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <div>
-            <div className="text-sm font-semibold">{user.displayName || user.firstName}</div>
-            <div className="text-xs text-white/70">Parent Portal</div>
-          </div>
-          <form action="/api/auth/logout" method="POST">
-            <button type="submit" className="text-xs hover:underline">Logout</button>
-          </form>
+    <PortalShell
+      title="Parent portal"
+      subtitle={user.displayName || user.firstName}
+      nav={NAV}
+    >
+      <h1 className="mb-2 text-2xl font-bold text-[var(--color-navy)]">My children</h1>
+      <p className="mb-6 text-sm text-[var(--color-muted-text)]">
+        Only verified linked students are shown. Ask the office if a child is missing.
+      </p>
+
+      {children.length === 0 ? (
+        <div className="card-surface p-6 text-sm text-slate-500">
+          No linked children yet. Contact the school office to link your ward's profile to this account.
         </div>
-      </header>
-
-      <div className="mx-auto max-w-5xl px-4 py-8">
-        <h1 className="mb-6 text-xl font-bold text-slate-800">My Children</h1>
-
-        {children.length === 0 ? (
-          <p className="rounded-xl border bg-white p-6 text-sm text-slate-500">
-            No linked children. Contact the school office to link your ward&apos;s profile.
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {children.map((child) => {
-              const enr = child.enrollments[0];
-              return (
-                <div key={child.id} className="rounded-xl border bg-white p-5 shadow-sm">
-                  <div className="mb-2 flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-slate-800">
-                        {child.firstName} {child.lastName}
-                      </div>
-                      <div className="text-xs text-slate-500">
-                        {enr ? `${enr.class.name}${enr.section ? `-${enr.section.name}` : ""}` : ""} ·{" "}
-                        {child.admissionNumber}
-                      </div>
+      ) : (
+        <div className="space-y-4">
+          {children.map((child) => {
+            const enr = child.enrollments[0];
+            return (
+              <div key={child.id} className="card-surface p-5">
+                <div className="mb-1 text-base font-semibold text-slate-900">
+                  {child.firstName} {child.lastName}
+                </div>
+                <div className="text-xs text-slate-500">
+                  {enr ? `${enr.class.name}${enr.section ? `-${enr.section.name}` : ""} · ` : ""}
+                  {child.admissionNumber}
+                </div>
+                {child.reportCards.length > 0 && (
+                  <div className="mt-4 border-t border-slate-100 pt-3">
+                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Recent results
                     </div>
-                  </div>
-                  {child.reportCards.length > 0 && (
-                    <div className="mt-3 border-t pt-3">
-                      <div className="mb-1 text-xs font-medium text-slate-500">Recent Results</div>
+                    <ul className="space-y-2">
                       {child.reportCards.map((rc) => (
-                        <div key={rc.id} className="flex justify-between text-sm">
-                          <span>{rc.exam.name}</span>
-                          <span>
-                            {rc.percentage != null ? `${rc.percentage.toFixed(1)}%` : "—"}{" "}
+                        <li key={rc.id} className="flex items-center justify-between text-sm">
+                          <span className="text-slate-700">{rc.exam.name}</span>
+                          <span className="flex items-center gap-2">
+                            <span className="text-slate-500">
+                              {rc.percentage != null ? `${rc.percentage.toFixed(1)}%` : "—"}
+                            </span>
                             <Link
                               href={`/parent/results/${rc.id}`}
-                              className="text-[var(--color-navy)] hover:underline"
+                              className="font-semibold text-[var(--color-blue)] hover:underline"
                             >
                               View
                             </Link>
                           </span>
-                        </div>
+                        </li>
                       ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </PortalShell>
   );
 }
