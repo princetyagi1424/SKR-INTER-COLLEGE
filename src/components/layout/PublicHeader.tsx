@@ -35,10 +35,10 @@ export function PublicHeader() {
 
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-[0_4px_24px_rgba(15,23,42,0.04)] backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/70 bg-[#fbfcf8]/90 shadow-[0_6px_30px_rgba(15,23,42,0.05)] backdrop-blur-2xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-3 rounded-xl" aria-label="S.K.R. Inter College home">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-blue)] to-sky-500 text-sm font-extrabold tracking-tight text-white shadow-md shadow-blue-950/15 transition-transform group-hover:-rotate-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#173c31] text-sm font-extrabold tracking-tight text-amber-300 shadow-lg shadow-emerald-950/15 transition duration-300 group-hover:-rotate-6 group-hover:scale-105">
             SKR
           </span>
           <span className="min-w-0 leading-tight">
@@ -77,7 +77,7 @@ export function PublicHeader() {
           <Link href="/login" className="rounded-full px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
             Login
           </Link>
-          <Link href="/apply-now" className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-navy)] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[var(--color-navy-dark)] hover:shadow-md">
+          <Link href="/apply-now" className="inline-flex items-center gap-1.5 rounded-full bg-[#173c31] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#245747] hover:shadow-md">
             Apply now <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
