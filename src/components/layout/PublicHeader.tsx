@@ -33,9 +33,6 @@ export function PublicHeader() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-[0_4px_24px_rgba(15,23,42,0.04)] backdrop-blur-xl">
