@@ -116,10 +116,11 @@ export default async function AdminDashboard() {
       subtitle={`${session?.name || "No active session"} · ${user.displayName || user.firstName}`}
       nav={NAV}
     >
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[var(--color-navy)]">Overview</h1>
-        <p className="mt-1 text-sm text-[var(--color-muted-text)]">
-          Live counts from the school database. Empty modules stay at zero until data is entered.
+      <div className="mb-6 overflow-hidden rounded-3xl bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 p-6 text-white shadow-lg sm:p-8">
+        <p className="text-xs font-semibold uppercase tracking-wider text-white/70">Admin workspace</p>
+        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Welcome back</h1>
+        <p className="mt-2 max-w-xl text-sm text-white/80">
+          Live counts from the school database. Empty modules stay at zero until real data is entered.
         </p>
       </div>
 
@@ -128,32 +129,28 @@ export default async function AdminDashboard() {
           <Link
             key={s.label}
             href={s.href}
-            className="card-surface group p-4 transition hover:border-[var(--color-blue)]/30 hover:shadow-md"
+            className="rounded-2xl border border-white bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <div className="mb-3 flex items-center justify-between">
-              <s.icon className="h-5 w-5 text-[var(--color-blue)]" />
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 group-hover:text-[var(--color-blue)]">
-                Open
-              </span>
+              <s.icon className="h-5 w-5 text-emerald-600" />
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Open</span>
             </div>
-            <div className="text-2xl font-bold text-[var(--color-text)]">{s.value}</div>
-            <div className="mt-0.5 text-xs text-[var(--color-muted-text)]">{s.label}</div>
+            <div className="text-2xl font-bold text-slate-900">{s.value}</div>
+            <div className="mt-0.5 text-xs text-slate-500">{s.label}</div>
           </Link>
         ))}
       </div>
 
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted-text)]">
-        Quick actions
-      </h2>
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Quick actions</h2>
       <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {actions.map((a) => (
           <Link
             key={a.href}
             href={a.href}
-            className="card-surface flex items-start gap-3 p-4 transition hover:border-[var(--color-blue)]/30"
+            className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:border-emerald-200"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-navy)]/5">
-              <a.icon className="h-4 w-4 text-[var(--color-navy)]" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50">
+              <a.icon className="h-4 w-4 text-emerald-700" />
             </div>
             <div>
               <div className="text-sm font-semibold text-slate-900">{a.label}</div>
@@ -163,10 +160,8 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted-text)]">
-        Latest published notices
-      </h2>
-      <div className="card-surface divide-y">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Latest published notices</h2>
+      <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         {recentNotices.length === 0 ? (
           <p className="p-5 text-sm text-slate-500">No published notices yet.</p>
         ) : (
@@ -178,7 +173,7 @@ export default async function AdminDashboard() {
                   {n.publishedAt ? new Date(n.publishedAt).toLocaleDateString("en-IN") : ""}
                 </div>
               </div>
-              <Link href="/admin/notices" className="shrink-0 text-xs font-semibold text-[var(--color-blue)] hover:underline">
+              <Link href="/admin/notices" className="shrink-0 text-xs font-semibold text-emerald-600 hover:underline">
                 Manage
               </Link>
             </div>
