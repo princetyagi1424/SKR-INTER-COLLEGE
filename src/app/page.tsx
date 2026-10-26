@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
+import { galleryImages, schoolProfile, UPMSP_SOURCE } from "@/data/upmsp";
 import {
   BookOpen,
   Users,
@@ -157,6 +158,52 @@ export default function HomePage() {
               <a href="tel:9837183726" className="btn-secondary">Call 9837183726</a>
             </div>
           </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 pb-12">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-blue)]">Our campus</p>
+              <h2 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">A closer look at S.K.R. Inter College</h2>
+              <p className="mt-2 max-w-2xl text-sm text-slate-600">
+                School photographs and public profile information sourced from UPMSP Pehchan, school code {schoolProfile.code}.
+              </p>
+            </div>
+            <Link href="/gallery" className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-blue)] hover:underline">
+              View all campus photos <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {galleryImages.slice(0, 4).map((photo) => (
+              <figure key={photo.title} className="card-surface overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photo.src}
+                  alt={photo.title}
+                  className="aspect-[4/3] w-full object-cover"
+                  loading="lazy"
+                />
+                <figcaption className="px-4 py-3 text-sm font-semibold text-slate-700">{photo.title}</figcaption>
+              </figure>
+            ))}
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: "UPMSP school code", value: schoolProfile.code },
+              { label: "UDISE code", value: schoolProfile.udise },
+              { label: "High School recognition", value: String(schoolProfile.recognition.highSchool) },
+              { label: "Intermediate recognition", value: String(schoolProfile.recognition.intermediate) },
+            ].map((item) => (
+              <div key={item.label} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+                <p className="text-xs text-slate-500">{item.label}</p>
+                <p className="mt-1 font-bold text-[var(--color-navy)]">{item.value}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-slate-500">
+            Official source: <a href={UPMSP_SOURCE} target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--color-blue)]">UPMSP Pehchan school profile</a>.
+            Public profile details may change; the official board record should be used to verify them.
+          </p>
         </section>
       </main>
       <PublicFooter />
