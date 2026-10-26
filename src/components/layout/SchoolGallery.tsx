@@ -35,10 +35,15 @@ export function SchoolGallery({ photos }: { photos: SchoolGalleryPhoto[] }) {
     <>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {photos.map((photo, index) => (
-          <button
-            type="button"
+          <a
             key={photo.src}
-            onClick={() => setActiveIndex(index)}
+            href={photo.src}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => {
+              event.preventDefault();
+              setActiveIndex(index);
+            }}
             className="group min-w-0 rounded-2xl text-left focus-visible:outline-offset-4"
             aria-label={`Open photo: ${photo.title}`}
           >
@@ -58,7 +63,7 @@ export function SchoolGallery({ photos }: { photos: SchoolGalleryPhoto[] }) {
                 <span className="text-xs font-medium text-[var(--color-blue)]">View photo</span>
               </figcaption>
             </figure>
-          </button>
+          </a>
         ))}
       </div>
 
