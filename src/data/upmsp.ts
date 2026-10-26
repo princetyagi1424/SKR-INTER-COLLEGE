@@ -5,10 +5,10 @@
  */
 
 const UPMSP_IMG = (name: string) =>
-  `https://upmsp.edu.in/Pehchan/GetImage.aspx?Class=S&Dist=01&ImageName=${encodeURIComponent(name)}`;
+  `/api/school-image?class=S&name=${encodeURIComponent(name)}`;
 
 const UPMSP_TEACHER_IMG = (name: string) =>
-  `https://upmsp.edu.in/Pehchan/GetImage.aspx?Class=T&Dist=011424&ImageName=${encodeURIComponent(name)}`;
+  `/api/school-image?class=T&name=${encodeURIComponent(name)}`;
 
 export const UPMSP_SOURCE =
   "https://upmsp.edu.in/Pehchan/SchoolInformation.aspx?Code=011424";
