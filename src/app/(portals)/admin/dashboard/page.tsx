@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession, ADMIN_ROLES, STAFF_ROLES } from "@/lib/auth";
+import { getSession, STAFF_ROLES } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import {
@@ -10,8 +10,30 @@ import {
   FileSpreadsheet,
   BookOpen,
   Bell,
-  LogOut,
+  Upload,
+  Library,
+  ScrollText,
+  Settings,
+  BarChart3,
 } from "lucide-react";
+import { PortalShell } from "@/components/portal/PortalShell";
+
+const NAV = [
+  { href: "/admin/dashboard", label: "Overview" },
+  { href: "/admin/students", label: "Students" },
+  { href: "/admin/students/import", label: "Bulk import" },
+  { href: "/admin/admissions", label: "Admissions" },
+  { href: "/admin/attendance", label: "Attendance" },
+  { href: "/admin/exams", label: "Exams" },
+  { href: "/admin/fees", label: "Fees" },
+  { href: "/admin/notices", label: "Notices" },
+  { href: "/admin/library", label: "Library" },
+  { href: "/admin/certificates", label: "Certificates" },
+  { href: "/admin/leave", label: "Staff leave" },
+  { href: "/admin/content", label: "Gallery & files" },
+  { href: "/admin/settings", label: "Settings" },
+  { href: "/admin/reports", label: "Reports" },
+];
 
 export default async function AdminDashboard() {
   const user = await getSession();
@@ -35,7 +57,7 @@ export default async function AdminDashboard() {
     prisma.student.count({ where: { isActive: true } }),
     prisma.staff.count({ where: { isActive: true } }),
     prisma.class.count({ where: { isActive: true, academicSessionId: sessionId || undefined } }),
-    prisma.admissionApplication.count({ where: { status: "SUBMITTED" } }),
+    prisma.admissionApplication.count({ where: { status: { in: ["NEW", "SUBMITTED"] } } }),
     sessionId
       ? prisma.attendance.count({
           where: {
@@ -60,155 +82,109 @@ export default async function AdminDashboard() {
   ]);
 
   const stats = [
-    { label: "Enrolled Students", value: studentCount, icon: Users, href: "/admin/students" },
-    { label: "Active Staff", value: staffCount, icon: GraduationCap, href: "/admin/staff" },
-    { label: "Classes", value: classCount, icon: BookOpen, href: "/admin/classes" },
-    { label: "Pending Admissions", value: pendingAdmissions, icon: ClipboardList, href: "/admin/admissions" },
-    { label: "Today Present", value: todayAttendance, icon: ClipboardList, href: "/admin/attendance" },
+    { label: "Enrolled students", value: studentCount, icon: Users, href: "/admin/students" },
+    { label: "Active staff", value: staffCount, icon: GraduationCap, href: "/admin/students" },
+    { label: "Classes", value: classCount, icon: BookOpen, href: "/admin/dashboard" },
+    { label: "Pending enquiries", value: pendingAdmissions, icon: ClipboardList, href: "/admin/admissions" },
+    { label: "Present today", value: todayAttendance, icon: ClipboardList, href: "/admin/attendance" },
     {
-      label: "Pending Fees (₹)",
+      label: "Pending fees (₹)",
       value: Math.round(pendingFees._sum.totalAmount || 0).toLocaleString("en-IN"),
       icon: IndianRupee,
       href: "/admin/fees",
     },
-    { label: "Active Exams", value: upcomingExams, icon: FileSpreadsheet, href: "/admin/exams" },
-    { label: "Notices", value: recentNotices.length, icon: Bell, href: "/admin/notices" },
+    { label: "Active exams", value: upcomingExams, icon: FileSpreadsheet, href: "/admin/exams" },
+    { label: "Recent notices", value: recentNotices.length, icon: Bell, href: "/admin/notices" },
+  ];
+
+  const actions = [
+    { href: "/admin/students/import", label: "Bulk import students", desc: "Excel / CSV", icon: Upload },
+    { href: "/admin/admissions", label: "Admission enquiries", desc: "Follow up", icon: ClipboardList },
+    { href: "/admin/exams", label: "Exams & results", desc: "Publish cards", icon: FileSpreadsheet },
+    { href: "/admin/attendance", label: "Attendance", desc: "Daily records", icon: ClipboardList },
+    { href: "/admin/fees", label: "Fees", desc: "Invoices & receipts", icon: IndianRupee },
+    { href: "/admin/library", label: "Library", desc: "Issue & return", icon: Library },
+    { href: "/admin/certificates", label: "Certificates", desc: "Bonafide / TC", icon: ScrollText },
+    { href: "/admin/notices", label: "Notices", desc: "Publish updates", icon: Bell },
+    { href: "/admin/settings", label: "School settings", desc: "Contact & hours", icon: Settings },
+    { href: "/admin/reports", label: "Reports", desc: "Operational counts", icon: BarChart3 },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Top bar */}
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-navy)] text-sm font-bold text-[var(--color-gold)]">
-              SKR
+    <PortalShell
+      title="Admin portal"
+      subtitle={`${session?.name || "No active session"} · ${user.displayName || user.firstName}`}
+      nav={NAV}
+    >
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-[var(--color-navy)]">Overview</h1>
+        <p className="mt-1 text-sm text-[var(--color-muted-text)]">
+          Live counts from the school database. Empty modules stay at zero until data is entered.
+        </p>
+      </div>
+
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map((s) => (
+          <Link
+            key={s.label}
+            href={s.href}
+            className="card-surface group p-4 transition hover:border-[var(--color-blue)]/30 hover:shadow-md"
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <s.icon className="h-5 w-5 text-[var(--color-blue)]" />
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 group-hover:text-[var(--color-blue)]">
+                Open
+              </span>
+            </div>
+            <div className="text-2xl font-bold text-[var(--color-text)]">{s.value}</div>
+            <div className="mt-0.5 text-xs text-[var(--color-muted-text)]">{s.label}</div>
+          </Link>
+        ))}
+      </div>
+
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted-text)]">
+        Quick actions
+      </h2>
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {actions.map((a) => (
+          <Link
+            key={a.href}
+            href={a.href}
+            className="card-surface flex items-start gap-3 p-4 transition hover:border-[var(--color-blue)]/30"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-navy)]/5">
+              <a.icon className="h-4 w-4 text-[var(--color-navy)]" />
             </div>
             <div>
-              <div className="text-sm font-semibold text-[var(--color-navy)]">Admin Dashboard</div>
-              <div className="text-xs text-slate-500">
-                {session?.name || "No active session"} · {user.displayName || user.firstName}
-              </div>
+              <div className="text-sm font-semibold text-slate-900">{a.label}</div>
+              <div className="text-xs text-slate-500">{a.desc}</div>
             </div>
-          </div>
-          <form action="/api/auth/logout" method="POST">
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
-            >
-              <LogOut className="h-4 w-4" /> Logout
-            </button>
-          </form>
-        </div>
-      </header>
+          </Link>
+        ))}
+      </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-slate-800">Overview</h1>
-
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((s) => (
-            <Link
-              key={s.label}
-              href={s.href}
-              className="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md"
-            >
-              <div className="mb-2 flex items-center justify-between">
-                <s.icon className="h-5 w-5 text-[var(--color-navy)]" />
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted-text)]">
+        Latest published notices
+      </h2>
+      <div className="card-surface divide-y">
+        {recentNotices.length === 0 ? (
+          <p className="p-5 text-sm text-slate-500">No published notices yet.</p>
+        ) : (
+          recentNotices.map((n) => (
+            <div key={n.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+              <div className="min-w-0">
+                <div className="truncate font-medium text-slate-800">{n.title}</div>
+                <div className="text-xs text-slate-500">
+                  {n.publishedAt ? new Date(n.publishedAt).toLocaleDateString("en-IN") : ""}
+                </div>
               </div>
-              <div className="text-2xl font-bold text-slate-800">{s.value}</div>
-              <div className="text-xs text-slate-500">{s.label}</div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Quick actions */}
-        <h2 className="mb-4 text-lg font-semibold text-slate-800">Quick Actions</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            href="/admin/students/import"
-            className="rounded-xl border border-[var(--color-navy)]/20 bg-white p-4 text-sm font-medium text-[var(--color-navy)] shadow-sm hover:bg-slate-50"
-          >
-            📥 Bulk Import Students (Excel)
-          </Link>
-          <Link
-            href="/admin/students"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            👥 Manage Students
-          </Link>
-          <Link
-            href="/admin/exams"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            📝 Examinations & Results
-          </Link>
-          <Link
-            href="/admin/attendance"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            ✅ Attendance
-          </Link>
-          <Link
-            href="/admin/fees"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            💰 Fees & Payments
-          </Link>
-          <Link
-            href="/admin/notices"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            📢 Notices
-          </Link>
-          <Link
-            href="/admin/library"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            Library
-          </Link>
-          <Link
-            href="/admin/certificates"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            Certificates
-          </Link>
-          <Link
-            href="/admin/leave"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            Staff leave
-          </Link>
-          <Link
-            href="/admin/settings"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            ⚙️ School Settings
-          </Link>
-          <Link
-            href="/admin/reports"
-            className="rounded-xl border bg-white p-4 text-sm font-medium shadow-sm hover:bg-slate-50"
-          >
-            📊 Reports
-          </Link>
-        </div>
-
-        {/* Recent notices */}
-        {recentNotices.length > 0 && (
-          <div className="mt-8">
-            <h2 className="mb-4 text-lg font-semibold text-slate-800">Recent Notices</h2>
-            <ul className="divide-y rounded-xl border bg-white">
-              {recentNotices.map((n) => (
-                <li key={n.id} className="px-4 py-3 text-sm">
-                  <span className="font-medium">{n.title}</span>
-                  <span className="ml-2 text-xs text-slate-400">
-                    {new Date(n.createdAt).toLocaleDateString("en-IN")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+              <Link href="/admin/notices" className="shrink-0 text-xs font-semibold text-[var(--color-blue)] hover:underline">
+                Manage
+              </Link>
+            </div>
+          ))
         )}
       </div>
-    </div>
+    </PortalShell>
   );
 }
