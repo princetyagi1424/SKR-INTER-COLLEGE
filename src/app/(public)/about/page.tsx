@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { schoolProfile, UPMSP_SOURCE, highSchoolBoardResults, intermediateBoardResults, studentStatistics, schoolReportCard, schoolAchievements, officialLinks } from "@/data/upmsp";
-import { MapPin, Phone, Building2, BookOpen, Shield } from "lucide-react";
+import { MapPin, Phone, Building2, BookOpen, Shield, ArrowRight } from "lucide-react";
 
 export const metadata = {
   title: "About",
