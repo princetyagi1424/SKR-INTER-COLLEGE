@@ -20,6 +20,23 @@ export function PortalShell({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+        redirect: "manual",
+      });
+    } catch {
+      /* still leave the app */
+    }
+    // replace so Back cannot return to an authenticated portal page
+    window.location.replace("/login?loggedOut=1");
+  }
 
   return (
     <div className="min-h-screen bg-[#eef2f7]">
@@ -70,14 +87,15 @@ export function PortalShell({
           </nav>
 
           <div className="border-t border-slate-100 p-3">
-            <form action="/api/auth/logout" method="POST">
-              <button
-                type="submit"
-                className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600"
-              >
-                <LogOut className="h-4 w-4" /> Logout
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-60"
+            >
+              <LogOut className="h-4 w-4" />
+              {loggingOut ? "Logging out…" : "Logout"}
+            </button>
           </div>
         </aside>
 
@@ -106,9 +124,19 @@ export function PortalShell({
                 {subtitle && <div className="truncate text-xs text-slate-500">{subtitle}</div>}
               </div>
             </div>
-            <Link href="/" className="hidden text-xs font-semibold text-emerald-600 hover:underline sm:inline">
-              Public website
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/" className="hidden text-xs font-semibold text-emerald-600 hover:underline sm:inline">
+                Public website
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+              >
+                {loggingOut ? "…" : "Logout"}
+              </button>
+            </div>
           </header>
           <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
         </div>
