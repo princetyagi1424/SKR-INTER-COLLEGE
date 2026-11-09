@@ -1,25 +1,44 @@
 {
-  "name": "S.K.R. INTER COLLEGE",
-  "short_name": "SKR College",
-  "description": "S.K.R. INTER COLLEGE & PVT ITI — school website and portals for students, parents, teachers and staff.",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "name": "SKR IC",
+  "short_name": "SKR IC",
+  "description": "S.K.R. INTER COLLEGE & S.K.R. PVT ITI — School Portal",
+  "start_url": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-  "background_color": "#fff8f0",
+  "background_color": "#1a1a1a",
   "theme_color": "#c8102e",
   "orientation": "portrait-primary",
-  "lang": "en-IN",
-  "categories": ["education", "productivity"],
   "icons": [
-    { "src": "/api/pwa-icon?size=192", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/api/pwa-icon?size=512", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/api/pwa-icon?size=512", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Portal login", "short_name": "Login", "url": "/login" },
-    { "name": "Admission enquiry", "short_name": "Apply", "url": "/apply-now" },
-    { "name": "Notices", "short_name": "Notices", "url": "/notices" },
-    { "name": "Contact", "short_name": "Contact", "url": "/contact" }
+    {
+      "name": "Student Login",
+      "short_name": "Student",
+      "url": "/login?role=student",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Teacher Login",
+      "short_name": "Teacher",
+      "url": "/login?role=teacher",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }
