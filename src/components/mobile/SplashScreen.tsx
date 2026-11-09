@@ -58,7 +58,7 @@ export function SplashScreen() {
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
         style={{
-          backgroundImage: "url(/api/campus-image?kind=splash)",
+          backgroundImage: "url(/api/campus-image)",
           filter: "blur(2px)",
           transform: showContent ? "scale(1.08)" : "scale(1.02)",
           transition: "transform 3s ease-out",
