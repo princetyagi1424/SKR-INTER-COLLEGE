@@ -90,7 +90,6 @@ export async function getSession(): Promise<SessionUser | null> {
     const userId = payload.sub as string;
     if (!userId) return null;
 
-    // Prefer claims embedded in JWT (no DB round-trip needed)
     if (payload.role && typeof payload.firstName === "string") {
       return {
         id: userId,
@@ -103,7 +102,6 @@ export async function getSession(): Promise<SessionUser | null> {
       };
     }
 
-    // Legacy tokens: load from DB
     const sessionToken = payload.sid as string;
     if (!sessionToken) return null;
 
@@ -165,7 +163,19 @@ export async function destroySession() {
       /* ignore */
     }
   }
-  cookieStore.delete(SESSION_COOKIE);
+  cookieStore.set(SESSION_COOKIE, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  try {
+    cookieStore.delete(SESSION_COOKIE);
+  } catch {
+    /* ignore */
+  }
 }
 
 export async function requireAuth(allowedRoles?: Role[]): Promise<SessionUser> {
@@ -191,16 +201,22 @@ export const ADMIN_ROLES: Role[] = [
   Role.SCHOOL_ADMIN,
 ];
 
+/** Roles allowed on /admin portal (teachers use /teacher) */
 export const STAFF_ROLES: Role[] = [
   ...ADMIN_ROLES,
   Role.ADMISSION_OFFICER,
-  Role.TEACHER,
   Role.EXAM_CONTROLLER,
   Role.ACCOUNTANT,
   Role.LIBRARIAN,
   Role.HR,
   Role.TRANSPORT_MANAGER,
   Role.STAFF,
+];
+
+/** Any school employee including teachers */
+export const EMPLOYEE_ROLES: Role[] = [
+  ...STAFF_ROLES,
+  Role.TEACHER,
 ];
 
 export function canManageStudents(role: Role): boolean {
