@@ -7,15 +7,16 @@ export const runtime = "nodejs";
 async function loadB64(prefix: string) {
   const dir = path.join(process.cwd(), "public", "icons");
   const chunks: string[] = [];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 16; i++) {
     try {
-      chunks.push(await readFile(path.join(dir, `${prefix}-${i}.b64`), "utf8"));
+      const t = await readFile(path.join(dir, `${prefix}-${i}.b64`), "utf8");
+      chunks.push(t.replace(/\s+/g, ""));
     } catch {
       break;
     }
   }
-  if (chunks.length) return chunks.join("").replace(/\s+/g, "");
-  return (await readFile(path.join(dir, `${prefix}.b64`), "utf8")).replace(/\s+/g, "");
+  if (!chunks.length) throw new Error("no icon parts");
+  return chunks.join("");
 }
 
 export async function GET(req: NextRequest) {

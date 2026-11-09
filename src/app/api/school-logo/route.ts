@@ -7,14 +7,14 @@ export async function GET() {
   const dir = path.join(process.cwd(), "public", "icons");
   try {
     const chunks: string[] = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 16; i++) {
       try {
-        chunks.push(await readFile(path.join(dir, `icon-180-${i}.b64`), "utf8"));
+        chunks.push((await readFile(path.join(dir, `icon-180-${i}.b64`), "utf8")).replace(/\s+/g, ""));
       } catch {
         break;
       }
     }
-    const b64 = chunks.join("").replace(/\s+/g, "");
+    const b64 = chunks.join("");
     return new Response(Buffer.from(b64, "base64"), {
       headers: {
         "Content-Type": "image/png",
