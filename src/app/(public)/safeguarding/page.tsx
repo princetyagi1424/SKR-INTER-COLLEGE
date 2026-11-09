@@ -1,39 +1,20 @@
-import { PublicHeader } from "@/components/layout/PublicHeader";
-import { PublicFooter } from "@/components/layout/PublicFooter";
+import { PublicPageShell, SoftCard } from "@/components/layout/PublicPageShell";
 
-export const metadata = { title: "Child Safeguarding" };
+export const metadata = { title: "Child safeguarding" };
 
-export default function SafeguardingPage() {
+export default function Page() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <PublicHeader />
-      <main className="mx-auto max-w-3xl flex-1 px-4 py-12">
-        <h1 className="mb-2 text-3xl font-bold text-[var(--color-navy)]">Child Safeguarding</h1>
-        <p className="mb-6 text-sm text-slate-500">S.K.R. INTER COLLEGE & PVT ITI</p>
-        <div className="space-y-4 text-sm leading-relaxed text-slate-700">
-          <p>
-            The safety and dignity of every student is a priority. Staff are expected to maintain
-            professional conduct. Students and parents may report concerns to the school office without fear of retaliation.
-          </p>
-          <h2 className="text-lg font-semibold text-[var(--color-navy)]">Reporting a concern</h2>
-          <p>
-            Contact the school office during working hours (Monday–Saturday, 8:00 AM – 2:00 PM):
-          </p>
-          <ul className="list-disc pl-5">
-            <li>Phone: <a href="tel:9837183726" className="underline">9837183726</a></li>
-            <li>Address: Udaypur Khalsa, Post Bhadrauli, Bah, Pinahat, Agra — 283113</li>
-          </ul>
-          <p>
-            In an emergency involving immediate danger, contact local emergency services first.
-          </p>
-          <h2 className="text-lg font-semibold text-[var(--color-navy)]">Online safety</h2>
-          <p>
-            Portal accounts are private. Students should not share passwords. Parents should supervise
-            younger students' use of digital devices for school work.
-          </p>
-        </div>
-      </main>
-      <PublicFooter />
-    </div>
+    <PublicPageShell eyebrow="Safety" title="Child safeguarding">
+      <SoftCard>
+        <p className="text-sm leading-7 text-slate-600">
+          The school is committed to a safe environment for every student.
+          Concerns about student safety should be reported promptly to the Principal or school office at 9837183726.
+        </p>
+        <p className="mt-4 text-xs text-slate-500">
+          For formal policy documents, contact the school office. Public contact:{" "}
+          <a href="tel:9837183726" className="font-semibold text-[var(--color-navy)] underline">9837183726</a>.
+        </p>
+      </SoftCard>
+    </PublicPageShell>
   );
 }

@@ -3,7 +3,7 @@ import { prisma } from "./prisma";
 import { STAFF_ROLES } from "./auth";
 
 export async function canViewStudentRecord(user: { id: string; role: Role }, studentId: string) {
-  if (STAFF_ROLES.includes(user.role)) return true;
+  if (STAFF_ROLES.includes(user.role) || user.role === Role.TEACHER) return true;
   if (user.role === Role.STUDENT) {
     const s = await prisma.student.findFirst({ where: { id: studentId, userId: user.id }, select: { id: true } });
     return !!s;

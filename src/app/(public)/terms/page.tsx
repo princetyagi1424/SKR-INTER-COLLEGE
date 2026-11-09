@@ -1,38 +1,20 @@
-import { PublicHeader } from "@/components/layout/PublicHeader";
-import { PublicFooter } from "@/components/layout/PublicFooter";
+import { PublicPageShell, SoftCard } from "@/components/layout/PublicPageShell";
 
-export const metadata = { title: "Terms of Use" };
+export const metadata = { title: "Terms of use" };
 
-export default function TermsPage() {
+export default function Page() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <PublicHeader />
-      <main className="mx-auto max-w-3xl flex-1 px-4 py-12">
-        <h1 className="mb-2 text-3xl font-bold text-[var(--color-navy)]">Terms of Use</h1>
-        <p className="mb-6 text-sm text-slate-500">S.K.R. INTER COLLEGE & PVT ITI</p>
-        <div className="space-y-4 text-sm leading-relaxed text-slate-700">
-          <p>
-            This website provides public information and secure portals for students, parents and staff of
-            S.K.R. INTER COLLEGE & PVT ITI, Udaypur Khalsa, Agra.
-          </p>
-          <p>
-            Users must provide accurate information, keep login credentials confidential, and use the
-            portals only for authorised purposes. Misuse of accounts or attempts to access another
-            person's records is prohibited.
-          </p>
-          <p>
-            Content on public pages is for information. Official decisions, fees, results and certificates
-            are confirmed only by the school office or authorised portal records.
-          </p>
-          <p>
-            The school may update these terms. Continued use of the site after changes constitutes acceptance.
-          </p>
-          <p>
-            Contact: 9837183726 · Udaypur Khalsa, Post Bhadrauli, Bah, Pinahat, Agra — 283113.
-          </p>
-        </div>
-      </main>
-      <PublicFooter />
-    </div>
+    <PublicPageShell eyebrow="Legal" title="Terms of use">
+      <SoftCard>
+        <p className="text-sm leading-7 text-slate-600">
+          This website provides institutional information and secure portals for authorised users.
+          Misuse of login credentials or attempts to access another person&apos;s records is prohibited.
+        </p>
+        <p className="mt-4 text-xs text-slate-500">
+          For formal policy documents, contact the school office. Public contact:{" "}
+          <a href="tel:9837183726" className="font-semibold text-[var(--color-navy)] underline">9837183726</a>.
+        </p>
+      </SoftCard>
+    </PublicPageShell>
   );
 }
