@@ -8,6 +8,7 @@ import { Eye, EyeOff } from "lucide-react";
 function LoginForm() {
   const search = useSearchParams();
   const staffHint = search.get("role") === "staff";
+  const loggedOut = search.get("loggedOut") === "1";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -69,7 +70,7 @@ function LoginForm() {
       } else if (role === "TEACHER") dest = "/teacher/dashboard";
       else if (role === "STUDENT") dest = "/student/dashboard";
       else if (role === "PARENT") dest = "/parent/dashboard";
-      window.location.assign(dest);
+      window.location.replace(dest);
     } catch {
       setError("Network error. Check your connection and try again.");
       setLoading(false);
@@ -78,6 +79,11 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-[var(--shadow-card)]">
+      {loggedOut && (
+        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+          You have been logged out successfully.
+        </div>
+      )}
       <div className="mb-6 text-center">
         <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-navy)] text-xl font-bold text-[var(--color-gold)]">
           SKR
