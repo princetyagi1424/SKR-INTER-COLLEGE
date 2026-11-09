@@ -56,16 +56,16 @@ export function SplashScreen() {
       aria-label="App loading"
     >
       <div
-        className="absolute inset-0 bg-cover bg-center scale-105"
+        className="absolute inset-0"
         style={{
-          backgroundImage: "url(/api/campus-image)",
-          filter: "blur(2px)",
-          transform: showContent ? "scale(1.08)" : "scale(1.02)",
+          background:
+            "radial-gradient(ellipse at 30% 20%, rgba(200,16,46,0.35) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(30,58,95,0.9) 0%, #0a1628 70%), linear-gradient(160deg, #1a2744 0%, #0f1c2e 40%, #1a0a0e 100%)",
+          transform: showContent ? "scale(1.05)" : "scale(1)",
           transition: "transform 3s ease-out",
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/70" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.45)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.55)_100%)]" />
+      <div className="absolute left-0 right-0 top-0 h-1 bg-gradient-to-r from-transparent via-[#c8102e] to-transparent opacity-80" />
 
       <div
         className={`relative z-10 flex flex-col items-center px-6 text-center transition-all duration-700 ${
@@ -76,9 +76,9 @@ export function SplashScreen() {
         <img
           src="/icons/icon-192.png"
           alt=""
-          width={96}
-          height={96}
-          className={`mb-5 h-24 w-24 rounded-full bg-white/95 object-contain p-1 shadow-2xl ring-2 ring-white/40 transition-transform duration-1000 ${
+          width={104}
+          height={104}
+          className={`mb-5 h-[104px] w-[104px] rounded-full bg-white object-contain p-1.5 shadow-2xl ring-2 ring-white/50 transition-transform duration-1000 ${
             showContent ? "scale-100" : "scale-75"
           }`}
         />
@@ -88,14 +88,14 @@ export function SplashScreen() {
         <p className="mt-1.5 text-base font-medium text-[#f5d76e] drop-shadow sm:text-lg">
           {t("splashSubtitle")}
         </p>
-        <p className="mt-3 max-w-xs text-xs text-white/80 sm:text-sm">
+        <p className="mt-3 max-w-xs text-xs text-white/75 sm:text-sm">
           {t("tagline")}
         </p>
 
-        <div className="mt-8 h-1 w-40 overflow-hidden rounded-full bg-white/20">
+        <div className="mt-8 h-1 w-44 overflow-hidden rounded-full bg-white/20">
           <div className="skr-splash-progress-bar h-full rounded-full bg-[#c8102e]" />
         </div>
-        <p className="mt-3 text-[11px] uppercase tracking-widest text-white/60">
+        <p className="mt-3 text-[11px] uppercase tracking-widest text-white/55">
           {t("splashLoading")}
         </p>
       </div>
