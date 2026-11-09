@@ -1,133 +1,128 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Menu, X, Phone, ArrowUpRight } from "lucide-react";
-
-const NAV = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/academics", label: "Academics" },
-  { href: "/admissions", label: "Admissions" },
-  { href: "/faculty", label: "Faculty" },
-  { href: "/notices", label: "Notices" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/contact", label: "Contact" },
-];
-
-function isActivePath(pathname: string, href: string) {
-  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
-}
+import { useState } from "react";
+import { Menu, X, Phone, MapPin } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { LanguageToggle } from "@/components/ui/LanguageToggle";
 
 export function PublicHeader() {
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
-  useEffect(() => {
-    if (!open) return;
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpen(false);
-    }
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [open]);
+  const NAV = [
+    { href: "/", label: t("home") },
+    { href: "/about", label: t("about") },
+    { href: "/academics", label: t("academics") },
+    { href: "/admissions", label: t("admissions") },
+    { href: "/notices", label: t("notices") },
+    { href: "/gallery", label: t("gallery") },
+    { href: "/contact", label: t("contact") },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#efe6dc] bg-[#fff8f0]/92 shadow-[0_8px_30px_rgba(26,26,26,0.06)] backdrop-blur-2xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-3 rounded-xl" aria-label="S.K.R. Inter College home">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,#e31c23,#9a0c22)] text-sm font-extrabold tracking-tight text-white shadow-[0_10px_24px_rgba(200,16,46,0.35)] transition duration-300 group-hover:-rotate-6 group-hover:scale-105">
-            SKR
-          </span>
-          <span className="min-w-0 leading-tight">
-            <span className="block truncate text-xs font-extrabold tracking-wide text-[#1a1a1a] sm:text-sm">
-              S.K.R. INTER COLLEGE
+    <header className="sticky top-0 z-50 bg-[var(--color-navy)] text-white shadow-md">
+      <div className="hidden border-b border-white/10 bg-[var(--color-navy-dark)] px-4 py-1.5 text-xs sm:block">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          <div className="flex items-center gap-4">
+            <a href="tel:9837183726" className="flex items-center gap-1.5 hover:text-[var(--color-gold)]">
+              <Phone className="h-3.5 w-3.5" />
+              9837183726
+            </a>
+            <span className="flex items-center gap-1.5 text-white/70">
+              <MapPin className="h-3.5 w-3.5" />
+              {t("address")}
             </span>
-            <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-[#c8102e] sm:text-[10px]">
-              &amp; Private ITI · Agra
-            </span>
-          </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <LanguageToggle compact />
+            <Link href="/login" className="hover:text-[var(--color-gold)]">
+              {t("studentParentLogin")}
+            </Link>
+            <Link href="/login?role=staff" className="hover:text-[var(--color-gold)]">
+              {t("staffLogin")}
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/icons/icon-192.png"
+            alt="SKR IC"
+            width={44}
+            height={44}
+            className="h-11 w-11 shrink-0 rounded-full bg-white object-contain shadow-sm ring-1 ring-white/20"
+          />
+          <div className="min-w-0 leading-tight">
+            <div className="truncate text-base font-bold tracking-wide sm:text-lg">
+              {t("fullName")}
+            </div>
+            <div className="truncate text-[10px] font-medium uppercase tracking-wider text-[var(--color-gold)] sm:text-xs">
+              {t("itiName")}
+            </div>
+          </div>
         </Link>
 
-        <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Main navigation">
-          {NAV.map((item) => {
-            const active = isActivePath(pathname, item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`rounded-full px-3.5 py-2 text-[13px] font-semibold transition ${
-                  active
-                    ? "bg-[#1a1a1a] text-white shadow-sm"
-                    : "text-slate-600 hover:bg-[#f5ede3] hover:text-[#1a1a1a]"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="hidden items-center gap-1 lg:flex">
+          {NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-md px-3 py-2 text-sm font-medium transition hover:bg-white/10 hover:text-[var(--color-gold)]"
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            href="/admissions"
+            className="ml-2 rounded-md bg-[var(--color-gold)] px-4 py-2 text-sm font-semibold text-[var(--color-navy-dark)] transition hover:bg-[var(--color-gold-light)]"
+          >
+            {t("applyNow")}
+          </Link>
         </nav>
 
-        <div className="flex items-center gap-2">
-          <a
-            href="tel:9837183726"
-            className="hidden items-center gap-1.5 rounded-full border border-[#efe6dc] bg-white px-3 py-2 text-xs font-bold text-[#1a1a1a] shadow-sm transition hover:border-[#c8102e]/40 lg:inline-flex"
-          >
-            <Phone className="h-3.5 w-3.5 text-[#c8102e]" />
-            9837183726
-          </a>
-          <Link
-            href="/login"
-            className="hidden rounded-full border border-[#efe6dc] bg-white px-3.5 py-2 text-xs font-bold text-[#1a1a1a] shadow-sm transition hover:bg-[#f5ede3] sm:inline-flex"
-          >
-            Portal
-          </Link>
-          <Link
-            href="/apply-now"
-            className="inline-flex items-center gap-1 rounded-full bg-[linear-gradient(135deg,#e31c23,#c8102e)] px-3.5 py-2 text-xs font-extrabold text-white shadow-[0_10px_22px_rgba(200,16,46,0.32)] transition hover:brightness-105 sm:px-4"
-          >
-            Apply
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
+        <div className="flex items-center gap-2 lg:hidden">
+          <LanguageToggle compact />
           <button
             type="button"
-            className="inline-flex rounded-xl border border-[#efe6dc] bg-white p-2 text-[#1a1a1a] shadow-sm xl:hidden"
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
+            className="rounded-md p-2 hover:bg-white/10"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
           >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
       {open && (
-        <div className="border-t border-[#efe6dc] bg-[#fff8f0] px-4 py-4 xl:hidden">
-          <nav className="flex flex-col gap-1" aria-label="Mobile">
-            {NAV.map((item) => {
-              const active = isActivePath(pathname, item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className={`rounded-xl px-3 py-3 text-sm font-semibold ${
-                    active ? "bg-[#1a1a1a] text-white" : "text-slate-700 hover:bg-[#f5ede3]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+        <div className="border-t border-white/10 bg-[var(--color-navy-dark)] px-4 py-3 lg:hidden">
+          {NAV.map((item) => (
             <Link
-              href="/login"
+              key={item.href}
+              href={item.href}
+              className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-white/10"
               onClick={() => setOpen(false)}
-              className="mt-2 rounded-xl border border-[#efe6dc] bg-white px-3 py-3 text-sm font-bold text-[#1a1a1a]"
             >
-              Student / Parent / Staff portal
+              {item.label}
             </Link>
-          </nav>
+          ))}
+          <Link
+            href="/admissions"
+            className="mt-2 block rounded-md bg-[var(--color-gold)] px-3 py-2.5 text-center text-sm font-semibold text-[var(--color-navy-dark)]"
+            onClick={() => setOpen(false)}
+          >
+            {t("applyNow")}
+          </Link>
+          <Link
+            href="/login"
+            className="mt-2 block rounded-md border border-white/20 px-3 py-2.5 text-center text-sm"
+            onClick={() => setOpen(false)}
+          >
+            {t("login")}
+          </Link>
         </div>
       )}
     </header>
