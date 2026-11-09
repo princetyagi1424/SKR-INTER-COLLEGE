@@ -32,31 +32,30 @@ export function PortalShell({
         redirect: "manual",
       });
     } catch {
-      /* still leave the app */
+      /* still leave */
     }
-    // replace so Back cannot return to an authenticated portal page
     window.location.replace("/login?loggedOut=1");
   }
 
   return (
-    <div className="min-h-screen bg-[#eef2f7]">
+    <div className="min-h-screen bg-[#fff8f0]">
       <div className="mx-auto flex min-h-screen max-w-[1440px]">
         <aside
           className={`${
             open ? "fixed inset-y-0 left-0 z-50 flex" : "hidden lg:flex"
-          } w-64 flex-col border-r border-slate-100 bg-white shadow-sm`}
+          } w-64 flex-col border-r border-[#efe6dc] bg-white shadow-sm`}
         >
-          <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-bold text-white">
+          <div className="flex items-center gap-3 border-b border-[#efe6dc] px-5 py-5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[linear-gradient(145deg,#e31c23,#9a0c22)] text-sm font-bold text-white">
               SKR
             </div>
             <div>
-              <div className="text-sm font-bold text-slate-900">EduSKR</div>
-              <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Portal</div>
+              <div className="text-sm font-bold text-[#1a1a1a]">EduSKR</div>
+              <div className="text-[10px] font-medium uppercase tracking-wide text-[#c8102e]">Portal</div>
             </div>
             <button
               type="button"
-              className="ml-auto rounded-lg p-1.5 text-slate-400 hover:bg-slate-50 lg:hidden"
+              className="ml-auto rounded-lg p-1.5 text-slate-400 hover:bg-[#fff0f1] lg:hidden"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
             >
@@ -76,8 +75,8 @@ export function PortalShell({
                   onClick={() => setOpen(false)}
                   className={`block rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     active
-                      ? "bg-emerald-50 text-emerald-700 shadow-sm"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-[#fff0f1] font-semibold text-[#c8102e] shadow-sm"
+                      : "text-slate-600 hover:bg-[#f5ede3] hover:text-[#1a1a1a]"
                   }`}
                 >
                   {item.label}
@@ -86,12 +85,12 @@ export function PortalShell({
             })}
           </nav>
 
-          <div className="border-t border-slate-100 p-3">
+          <div className="border-t border-[#efe6dc] p-3">
             <button
               type="button"
               onClick={handleLogout}
               disabled={loggingOut}
-              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-60"
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 hover:bg-[#fff0f1] hover:text-[#c8102e] disabled:opacity-60"
             >
               <LogOut className="h-4 w-4" />
               {loggingOut ? "Logging out…" : "Logout"}
@@ -102,37 +101,37 @@ export function PortalShell({
         {open && (
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-slate-900/30 lg:hidden"
+            className="fixed inset-0 z-40 bg-black/30 lg:hidden"
             aria-label="Close overlay"
             onClick={() => setOpen(false)}
           />
         )}
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-slate-100 bg-white/90 px-4 py-3 backdrop-blur-md sm:px-6">
+          <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[#efe6dc] bg-[#fff8f0]/92 px-4 py-3 backdrop-blur-md sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
-                className="rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
+                className="rounded-xl p-2 text-slate-600 hover:bg-white lg:hidden"
                 onClick={() => setOpen(true)}
                 aria-label="Open menu"
               >
                 <Menu className="h-5 w-5" />
               </button>
               <div className="min-w-0">
-                <div className="truncate text-sm font-bold text-slate-900">{title}</div>
+                <div className="truncate text-sm font-bold text-[#1a1a1a]">{title}</div>
                 {subtitle && <div className="truncate text-xs text-slate-500">{subtitle}</div>}
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Link href="/" className="hidden text-xs font-semibold text-emerald-600 hover:underline sm:inline">
+              <Link href="/" className="hidden text-xs font-semibold text-[#c8102e] hover:underline sm:inline">
                 Public website
               </Link>
               <button
                 type="button"
                 onClick={handleLogout}
                 disabled={loggingOut}
-                className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+                className="rounded-full border border-[#efe6dc] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-[#fff0f1] disabled:opacity-60"
               >
                 {loggingOut ? "…" : "Logout"}
               </button>
