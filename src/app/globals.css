@@ -142,3 +142,38 @@ button, [role="button"] { cursor: pointer; }
 .reveal-on-view {
   animation: rise 0.8s ease-out both;
 }
+
+
+/* ——— Mobile app shell ——— */
+.app-shell {
+  padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 1024px) {
+  .app-shell {
+    padding-bottom: 0;
+  }
+}
+
+.portal-app-shell {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 1024px) {
+  .portal-app-shell {
+    padding-bottom: 0;
+  }
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+}
