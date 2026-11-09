@@ -37,8 +37,10 @@ export function PortalShell({
     window.location.replace("/login?loggedOut=1");
   }
 
+  const bottom = nav.slice(0, 4);
+
   return (
-    <div className="min-h-screen bg-[#fff8f0]">
+    <div className="portal-app-shell min-h-screen bg-[#fff8f0]">
       <div className="mx-auto flex min-h-screen max-w-[1440px]">
         <aside
           className={`${
@@ -140,6 +142,39 @@ export function PortalShell({
           <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
         </div>
       </div>
+
+      <nav
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-[#efe6dc] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+        aria-label="Portal quick nav"
+      >
+        <div className="mx-auto flex max-w-lg items-stretch justify-between px-1 pt-1">
+          {bottom.map((item) => {
+            const active =
+              pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href + "/"));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[10px] font-semibold ${
+                  active ? "text-[#c8102e]" : "text-slate-500"
+                }`}
+              >
+                <span className={`h-1 w-6 rounded-full ${active ? "bg-[#c8102e]" : "bg-transparent"}`} />
+                <span className="truncate">{item.label}</span>
+              </Link>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[10px] font-semibold text-slate-500"
+          >
+            <span className="h-1 w-6 rounded-full bg-transparent" />
+            <span>More</span>
+          </button>
+        </div>
+      </nav>
     </div>
   );
 }
