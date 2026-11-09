@@ -1,6 +1,6 @@
-import { PublicHeader } from "@/components/layout/PublicHeader";
-import { PublicFooter } from "@/components/layout/PublicFooter";
-import { FileText } from "lucide-react";
+import Link from "next/link";
+import { PublicPageShell, SoftCard } from "@/components/layout/PublicPageShell";
+import { schoolProfile, UPMSP_SOURCE } from "@/data/upmsp";
 
 export const metadata = { title: "Mandatory Disclosures" };
 
@@ -8,77 +8,76 @@ const SECTIONS = [
   {
     title: "Institution identity",
     items: [
-      "Name: S.K.R. INTER COLLEGE & PVT ITI",
-      "Address: Udaypur Khalsa, Post Bhadrauli, Bah, Pinahat, Agra, Uttar Pradesh — PIN 283113",
-      "Phone: 9837183726",
-      "UDISE Code: 09151302903 (as recorded; confirm with office for latest official records)",
+      `Name: ${"S.K.R. INTER COLLEGE"} & Private ITI`,
+      "Board record name: SKR I C UDAYPUR KHALSA BHADRAULI BAH AGRA",
+      "UPMSP school code: 011424",
+      "UDISE: 09181302903",
+      "Address: Udaypur Khalsa, Bhadrauli, Bah, Agra, Uttar Pradesh",
+      "Public phone: 9837183726",
+      "Principal (UPMSP): Uttam Singh Tyagi",
     ],
   },
   {
-    title: "Recognition & affiliation",
+    title: "Recognition",
     items: [
-      "Official recognition, affiliation and registration details are maintained by the school administration.",
-      "Only verified documents approved by the management will be published here.",
+      "High School recognition year: 2004",
+      "Intermediate recognition year: 2011",
+      "School type: वित्तविहीन (self-financed / unaided)",
       "Parents may request certified copies from the school office during working hours.",
     ],
   },
   {
     title: "Academic programmes",
     items: [
-      "Inter College stream (High School / Intermediate) — UP Board curriculum as applicable",
-      "Private ITI programmes — trades as offered by the institution",
-      "Detailed subject lists and textbooks are shared at the start of each session",
+      "Inter College streams (UP Board) — as listed under Academics",
+      "Private ITI programmes — confirm current trades at the office",
+      "Subject groups on UPMSP Pehchan: Humanities, Science, Commerce, Agriculture, Vocational",
     ],
   },
   {
-    title: "Fee structure & calendar",
+    title: "Contact & maps",
     items: [
-      "Fee structure is decided by the management for each academic year.",
-      "Academic calendar, examination schedule and holiday list are published in Notices.",
-      "Contact the office for the current fee booklet — do not rely on unofficial sources.",
-    ],
-  },
-  {
-    title: "Staff & infrastructure",
-    items: [
-      "Teaching and non-teaching staff details are available on request from the office.",
-      "Infrastructure and facilities information is maintained by the administration.",
-      "No fabricated claims are published on this website.",
+      "Office phone: 9837183726",
+      "Google Maps: https://maps.app.goo.gl/8XxfUuM4fMUAxzqd7",
+      "Coordinates (UPMSP): 26.8671452, 78.4519261",
     ],
   },
 ];
 
 export default function DisclosuresPage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <PublicHeader />
-      <main className="mx-auto max-w-4xl flex-1 px-4 py-12">
-        <h1 className="mb-2 text-3xl font-bold text-[var(--color-navy)]">Mandatory Disclosures</h1>
-        <p className="mb-8 text-slate-600">
-          Information published here is limited to verified school details. Additional official documents
-          can be obtained from the school office.
-        </p>
-        <div className="space-y-6">
-          {SECTIONS.map((s) => (
-            <section key={s.title} className="rounded-xl border bg-white p-6 shadow-sm">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-[var(--color-navy)]">
-                <FileText className="h-5 w-5" /> {s.title}
-              </h2>
-              <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700">
-                {s.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-        <p className="mt-8 text-center text-sm text-slate-500">
-          For certified documents call{" "}
-          <a href="tel:9837183726" className="font-medium text-[var(--color-navy)] underline">9837183726</a>
-          {" "}or visit the office (Mon–Sat, 8:00 AM – 2:00 PM).
-        </p>
-      </main>
-      <PublicFooter />
-    </div>
+    <PublicPageShell
+      eyebrow="Transparency"
+      title="Mandatory disclosures"
+      description="Key public facts about S.K.R. INTER COLLEGE drawn from the institution and the UPMSP Pehchan record for school code 011424."
+    >
+      <div className="grid gap-4 md:grid-cols-2">
+        {SECTIONS.map((section) => (
+          <SoftCard key={section.title}>
+            <h2 className="text-base font-bold text-slate-900">{section.title}</h2>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
+              {section.items.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </SoftCard>
+        ))}
+      </div>
+      <p className="mt-6 text-xs text-slate-500">
+        Source:{" "}
+        <a href={UPMSP_SOURCE} target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-navy)] underline">
+          UPMSP Pehchan school code 011424
+        </a>
+        . Additional certificates are available from the school office.
+      </p>
+      <div className="mt-4">
+        <Link href="/about" className="text-sm font-bold text-[var(--color-navy)] hover:underline">
+          View full about page →
+        </Link>
+      </div>
+    </PublicPageShell>
   );
 }
