@@ -6,28 +6,33 @@ import { Menu, X, Phone, MapPin, Download } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
+
 function useIsPwa() {
   const [isPwa, setIsPwa] = useState(false);
   useEffect(() => {
+    const nav = window.navigator as Navigator & { standalone?: boolean };
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      // @ts-expect-error iOS Safari
-      window.navigator.standalone === true;
-    setIsPwa(isStandalone);
+      nav.standalone === true;
+    setIsPwa(!!isStandalone);
   }, []);
   return isPwa;
 }
 
 export function PublicHeader() {
   const [open, setOpen] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const { t } = useLanguage();
   const isPwa = useIsPwa();
 
   useEffect(() => {
     function onBip(e: Event) {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     }
     window.addEventListener("beforeinstallprompt", onBip);
     return () => window.removeEventListener("beforeinstallprompt", onBip);
@@ -35,7 +40,6 @@ export function PublicHeader() {
 
   async function handleInstall() {
     if (!deferredPrompt) return;
-    // @ts-expect-error prompt exists
     await deferredPrompt.prompt();
     setDeferredPrompt(null);
   }
