@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { AuthError, canEnterMarks, requireAuth } from "@/lib/auth";
+import { isTeacherAssignedToClass } from "@/lib/access-control";
 import { gradeFromPercentage } from "@/lib/grades";
-import { MarksStatus } from "@prisma/client";
+import { MarksStatus, Role } from "@prisma/client";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -16,6 +17,11 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
       include: { class: true, examSubjects: { include: { subject: true } } },
     });
     if (!exam) return NextResponse.json({ error: "Exam not found" }, { status: 404 });
+
+    if (user.role === Role.TEACHER) {
+      const assigned = await isTeacherAssignedToClass(user.id, exam.classId);
+      if (!assigned) return NextResponse.json({ error: "You are not assigned to this class" }, { status: 403 });
+    }
 
     const enrollments = await prisma.enrollment.findMany({
       where: { classId: exam.classId, status: "ENROLLED" },
@@ -41,6 +47,12 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
       include: { examSubjects: true },
     });
     if (!exam) return NextResponse.json({ error: "Exam not found" }, { status: 404 });
+
+    if (user.role === Role.TEACHER) {
+      const assigned = await isTeacherAssignedToClass(user.id, exam.classId);
+      if (!assigned) return NextResponse.json({ error: "You are not assigned to this class" }, { status: 403 });
+    }
+
     if (exam.status === "PUBLISHED" || exam.status === "ARCHIVED") {
       return NextResponse.json({ error: "Published exam is locked. Use a correction with a reason." }, { status: 409 });
     }

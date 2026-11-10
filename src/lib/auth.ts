@@ -4,9 +4,23 @@ import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { Role, UserStatus } from "@prisma/client";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "skr-college-dev-secret-change-in-production-min-32-chars"
-);
+function resolveJwtSecret(): Uint8Array {
+  const configured = process.env.JWT_SECRET;
+  if (configured && configured.length >= 32) {
+    return new TextEncoder().encode(configured);
+  }
+  if (process.env.NODE_ENV === "production") {
+    // Never fall back to a known/shared secret in production: that would let
+    // anyone forge a valid admin session cookie.
+    throw new Error(
+      "JWT_SECRET is not set (or is shorter than 32 characters). Set a strong, random JWT_SECRET in the production environment before starting the app."
+    );
+  }
+  // Local development only. Not used when NODE_ENV === "production".
+  return new TextEncoder().encode("skr-college-local-dev-only-not-for-production-min-32-chars");
+}
+
+const JWT_SECRET = resolveJwtSecret();
 const SESSION_COOKIE = "skr_session";
 const SESSION_DAYS = 7;
 
@@ -45,13 +59,13 @@ export async function createSession(
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + SESSION_DAYS);
 
-  try {
-    await prisma.session.create({
-      data: { userId, token, expiresAt, ipAddress: ip, userAgent: ua },
-    });
-  } catch (e) {
-    console.error("[createSession] session row failed (non-fatal):", e);
-  }
+  // This row is required: getSession() checks it on every request so that
+  // logout, suspension and deactivation take effect immediately instead of
+  // only once a long-lived JWT expires. If it can't be written, the login
+  // must fail rather than hand out a cookie that can never authenticate.
+  await prisma.session.create({
+    data: { userId, token, expiresAt, ipAddress: ip, userAgent: ua },
+  });
 
   const jwt = await new SignJWT({
     sub: userId,
@@ -90,18 +104,11 @@ export async function getSession(): Promise<SessionUser | null> {
     const userId = payload.sub as string;
     if (!userId) return null;
 
-    if (payload.role && typeof payload.firstName === "string") {
-      return {
-        id: userId,
-        email: typeof payload.email === "string" ? payload.email : null,
-        phone: typeof payload.phone === "string" ? payload.phone : null,
-        role: payload.role as Role,
-        firstName: payload.firstName,
-        lastName: typeof payload.lastName === "string" ? payload.lastName : null,
-        displayName: typeof payload.displayName === "string" ? payload.displayName : null,
-      };
-    }
-
+    // Always re-check the session row in the database, even when the JWT
+    // carries the user's claims. A JWT alone cannot be revoked once issued,
+    // so skipping this check would mean logout, account suspension, and
+    // account deactivation would have no effect until the 7-day token
+    // naturally expired.
     const sessionToken = payload.sid as string;
     if (!sessionToken) return null;
 

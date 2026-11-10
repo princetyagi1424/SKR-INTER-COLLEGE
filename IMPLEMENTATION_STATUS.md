@@ -37,12 +37,16 @@ https://skr-inter-college.vercel.app/
 
 ## Auth accounts (demo / bootstrap)
 
-| Role | Email | Password |
-|------|-------|----------|
-| Super Admin | princetyagi3726gg@gmail.com | ADMIN@123 |
-| Teacher | teacher.demo@skrcollege.local | Teacher@123 |
-| Student | skr2025001@student.skrcollege.local | Student@123 |
-| Parent | parent.demo@skrcollege.local | Parent@123 |
+Credentials are no longer documented here. The Super Admin account is created
+from `BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD` environment
+variables (set in Vercel, not in this repo); demo teacher/student/parent
+accounts get randomly generated passwords printed once when `npm run db:seed`
+is run. See `README.md`.
+
+> ⚠️ This file previously listed a real admin email and a weak password in
+> plaintext. If that password is still in use on the live site, change it
+> immediately — anyone who has ever viewed this public repository (including
+> its git history) has seen it.
 
 ## Feature checklist
 

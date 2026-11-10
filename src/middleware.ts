@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "skr-college-dev-secret-change-in-production-min-32-chars"
-);
+function resolveJwtSecret(): Uint8Array {
+  const configured = process.env.JWT_SECRET;
+  if (configured && configured.length >= 32) {
+    return new TextEncoder().encode(configured);
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "JWT_SECRET is not set (or is shorter than 32 characters). Set a strong, random JWT_SECRET in the production environment before starting the app."
+    );
+  }
+  return new TextEncoder().encode("skr-college-local-dev-only-not-for-production-min-32-chars");
+}
+
+const JWT_SECRET = resolveJwtSecret();
 
 const STAFF = new Set([
   "SUPER_ADMIN",

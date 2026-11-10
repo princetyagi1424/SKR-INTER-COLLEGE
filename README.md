@@ -77,14 +77,15 @@ npm run dev
 
 Open http://localhost:3000
 
-### Demo accounts (change immediately)
+### Demo accounts
 
-| Role        | Email                              | Password                   |
-|-------------|------------------------------------|----------------------------|
-| Super Admin | admin@skrcollege.local             | ChangeMeImmediately123!    |
-| Teacher     | teacher.demo@skrcollege.local      | Teacher@123                |
-| Student     | skr2025001@student.skrcollege.local| Student@123                |
-| Parent      | parent.demo@skrcollege.local       | Parent@123                 |
+`npm run db:seed` creates a Super Admin from `BOOTSTRAP_ADMIN_EMAIL` /
+`BOOTSTRAP_ADMIN_PASSWORD` (both required, no default), plus a fictional demo
+teacher, student and parent account. Passwords for the teacher/student/parent
+accounts are generated randomly each time the seed runs and printed once to
+the terminal — they are not stored in this repository. Run the seed script
+yourself against your own (ideally staging) database to get working demo
+logins; do not run it against production data.
 
 ---
 

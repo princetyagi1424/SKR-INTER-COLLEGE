@@ -1,60 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyPassword, createSession, hashPassword } from "@/lib/auth";
-import { Role, UserStatus } from "@prisma/client";
+import { verifyPassword, createSession } from "@/lib/auth";
+import { UserStatus } from "@prisma/client";
 
-// Standard institutional demo accounts for evaluator and stakeholder testing
-const DEMO_ACCOUNTS: Record<
-  string,
-  {
-    password: string;
-    role: Role;
-    firstName: string;
-    lastName: string;
-    displayName: string;
-    phone?: string;
+// ---------------------------------------------------------------------------
+// Login rate limiting (in-memory, per server instance).
+//
+// This is a best-effort guard against brute-force attempts. On serverless
+// platforms (e.g. Vercel) each instance has its own memory, so this does not
+// provide a hard global guarantee. For a stronger guarantee, back this with
+// a shared store (Redis/Upstash) keyed by IP and/or identifier.
+// ---------------------------------------------------------------------------
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const MAX_ATTEMPTS = 8; // per key, per window
+
+type Bucket = { count: number; resetAt: number };
+const attempts = new Map<string, Bucket>();
+
+function rateLimitKey(ip: string, identifier: string): string {
+  return `${ip}:${identifier}`;
+}
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const bucket = attempts.get(key);
+  if (!bucket || bucket.resetAt <= now) {
+    attempts.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
   }
-> = {
-  "admin@skrcollege.local": {
-    password: "ChangeMeImmediately123!",
-    role: Role.SUPER_ADMIN,
-    firstName: "System",
-    lastName: "Administrator",
-    displayName: "Super Admin",
-  },
-  "teacher.demo@skrcollege.local": {
-    password: "Teacher@123",
-    role: Role.TEACHER,
-    firstName: "Ramesh",
-    lastName: "Sharma",
-    displayName: "Mr. Ramesh Sharma",
-    phone: "9800000001",
-  },
-  "skr2025001@student.skrcollege.local": {
-    password: "Student@123",
-    role: Role.STUDENT,
-    firstName: "Aarav",
-    lastName: "Kumar",
-    displayName: "Aarav Kumar",
-    phone: "9800000002",
-  },
-  "skr2025001": {
-    password: "Student@123",
-    role: Role.STUDENT,
-    firstName: "Aarav",
-    lastName: "Kumar",
-    displayName: "Aarav Kumar",
-    phone: "9800000002",
-  },
-  "parent.demo@skrcollege.local": {
-    password: "Parent@123",
-    role: Role.PARENT,
-    firstName: "Suresh",
-    lastName: "Kumar",
-    displayName: "Suresh Kumar (Parent)",
-    phone: "9811111111",
-  },
-};
+  bucket.count += 1;
+  return bucket.count > MAX_ATTEMPTS;
+}
+
+function recordSuccess(key: string) {
+  attempts.delete(key);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -66,66 +46,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email/phone and password are required" }, { status: 400 });
     }
 
-    let user = null;
-    try {
-      user = await prisma.user.findFirst({
-        where: {
-          OR: [{ email: identifier }, { phone: identifier }],
-        },
-      });
-    } catch (dbErr) {
-      console.warn("[Login] DB lookup failed, checking demo accounts fallback:", dbErr);
+    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const key = rateLimitKey(ip, identifier);
+
+    if (isRateLimited(key)) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please wait a few minutes and try again." },
+        { status: 429 }
+      );
     }
 
-    // If user not in DB, check if it matches recognized institutional demo credentials
-    if (!user) {
-      const demo = DEMO_ACCOUNTS[identifier];
-      if (demo && demo.password === password) {
-        try {
-          const passHash = await hashPassword(demo.password);
-          const emailVal = identifier.includes("@")
-            ? identifier
-            : `${identifier}@student.skrcollege.local`;
-          user = await prisma.user.upsert({
-            where: { email: emailVal },
-            update: {
-              passwordHash: passHash,
-              role: demo.role,
-              status: UserStatus.ACTIVE,
-            },
-            create: {
-              email: emailVal,
-              passwordHash: passHash,
-              role: demo.role,
-              status: UserStatus.ACTIVE,
-              firstName: demo.firstName,
-              lastName: demo.lastName,
-              displayName: demo.displayName,
-              phone: demo.phone,
-            },
-          });
-        } catch (seedErr) {
-          console.warn("[Login] DB upsert failed, issuing in-memory demo session:", seedErr);
-          user = {
-            id: `demo-${demo.role.toLowerCase()}-${Date.now()}`,
-            email: identifier.includes("@") ? identifier : `${identifier}@student.skrcollege.local`,
-            phone: demo.phone || null,
-            role: demo.role,
-            status: UserStatus.ACTIVE,
-            firstName: demo.firstName,
-            lastName: demo.lastName,
-            displayName: demo.displayName,
-            passwordHash: "",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            lastLoginAt: new Date(),
-            emailVerifiedAt: new Date(),
-          };
-        }
-      }
-    }
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [{ email: identifier }, { phone: identifier }],
+      },
+    });
 
-    if (!user || (user.passwordHash && !(await verifyPassword(password, user.passwordHash)))) {
+    // Always run a bcrypt compare, even when the user doesn't exist or has no
+    // password hash, so that response timing doesn't reveal whether an
+    // account exists. A user with no passwordHash can never log in.
+    const hashToCheck = user?.passwordHash || "$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinva";
+    const passwordOk = await verifyPassword(password, hashToCheck);
+
+    if (!user || !user.passwordHash || !passwordOk) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
@@ -136,10 +79,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || undefined;
+    recordSuccess(key);
+
     const ua = req.headers.get("user-agent") || undefined;
 
-    await createSession(user.id, ip, ua, {
+    await createSession(user.id, ip === "unknown" ? undefined : ip, ua, {
       email: user.email,
       phone: user.phone,
       role: user.role,

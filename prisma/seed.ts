@@ -5,8 +5,20 @@
  */
 import { PrismaClient, Role, UserStatus, Gender, EnrollmentStatus, ExamStatus, MarksStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
+
+/**
+ * Generates a random password for a seeded account. Each run of this script
+ * gets fresh, unpredictable passwords instead of a fixed string that would
+ * end up documented in READMEs, committed to git, and known to everyone who
+ * has ever read this repository.
+ */
+function randomPassword(): string {
+  // 16 random bytes, base64url-encoded -> ~22 character password.
+  return crypto.randomBytes(16).toString("base64url");
+}
 
 async function main() {
   console.log("🌱 Seeding S.K.R. INTER COLLEGE demo database...\n");
@@ -28,7 +40,12 @@ async function main() {
       mapUrl: "https://maps.app.goo.gl/8XxfUuM4fMUAxzqd7",
       latitude: 26.8774282,
       longitude: 78.453594,
-      udiseCode: "09151302903",
+      // TODO: verify against the official UDISE+ record before relying on this.
+      // This was previously inconsistent across the codebase (09151302903
+      // here vs 09181302903 used on the public site and login page); aligned
+      // to the majority value, but neither has been confirmed against an
+      // authoritative source.
+      udiseCode: "09181302903",
       vision: "To provide quality education that empowers rural students to achieve academic excellence and become responsible citizens.",
       mission: "To nurture every student with knowledge, values and skills through dedicated teaching and a supportive learning environment.",
       workingHours: "Monday–Saturday: 8:00 AM – 2:00 PM",
@@ -137,13 +154,23 @@ async function main() {
   console.log("✓ Subjects");
 
   // Super Admin
-  const adminPass = process.env.BOOTSTRAP_ADMIN_PASSWORD || "ChangeMeImmediately123!";
+  const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
+  const adminPass = process.env.BOOTSTRAP_ADMIN_PASSWORD;
+  if (!adminEmail || !adminPass) {
+    throw new Error(
+      "BOOTSTRAP_ADMIN_EMAIL and BOOTSTRAP_ADMIN_PASSWORD must be set in the environment before seeding. " +
+        "Refusing to create a Super Admin with a default, publicly-known password."
+    );
+  }
+  if (adminPass.length < 12) {
+    throw new Error("BOOTSTRAP_ADMIN_PASSWORD must be at least 12 characters.");
+  }
   const adminHash = await bcrypt.hash(adminPass, 12);
   const admin = await prisma.user.upsert({
-    where: { email: process.env.BOOTSTRAP_ADMIN_EMAIL || "admin@skrcollege.local" },
+    where: { email: adminEmail },
     update: {},
     create: {
-      email: process.env.BOOTSTRAP_ADMIN_EMAIL || "admin@skrcollege.local",
+      email: adminEmail,
       passwordHash: adminHash,
       role: Role.SUPER_ADMIN,
       status: UserStatus.ACTIVE,
@@ -156,7 +183,8 @@ async function main() {
   console.log("✓ Super Admin:", admin.email);
 
   // Demo Teacher
-  const teacherHash = await bcrypt.hash("Teacher@123", 12);
+  const teacherPass = randomPassword();
+  const teacherHash = await bcrypt.hash(teacherPass, 12);
   const teacherUser = await prisma.user.upsert({
     where: { email: "teacher.demo@skrcollege.local" },
     update: {},
@@ -189,7 +217,8 @@ async function main() {
   console.log("✓ Demo Teacher");
 
   // Demo Students (fictional)
-  const studentHash = await bcrypt.hash("Student@123", 12);
+  const studentPass = randomPassword();
+  const studentHash = await bcrypt.hash(studentPass, 12);
   const demoStudents = [
     { adm: "SKR2025001", first: "Aarav", last: "Kumar", gender: Gender.MALE, roll: "1" },
     { adm: "SKR2025002", first: "Priya", last: "Singh", gender: Gender.FEMALE, roll: "2" },
@@ -240,7 +269,8 @@ async function main() {
   console.log("✓ Demo students (5)");
 
   // Demo Parent
-  const parentHash = await bcrypt.hash("Parent@123", 12);
+  const parentPass = randomPassword();
+  const parentHash = await bcrypt.hash(parentPass, 12);
   const parentUser = await prisma.user.upsert({
     where: { email: "parent.demo@skrcollege.local" },
     update: {},
@@ -326,12 +356,16 @@ async function main() {
   console.log("✓ Sample exam (Unit Test 1)");
 
   console.log("\n✅ Seed complete.\n");
-  console.log("Demo accounts (change passwords immediately):");
-  console.log("  Super Admin : admin@skrcollege.local / ChangeMeImmediately123!");
-  console.log("  Teacher     : teacher.demo@skrcollege.local / Teacher@123");
-  console.log("  Student     : skr2025001@student.skrcollege.local / Student@123");
-  console.log("  Parent      : parent.demo@skrcollege.local / Parent@123");
-  console.log("\n⚠️  These are FICTIONAL demo accounts. Remove before production.");
+  console.log("Generated credentials (shown ONCE — record them now, they are not stored anywhere):");
+  console.log(`  Super Admin : ${adminEmail} / ${adminPass}`);
+  console.log(`  Teacher     : teacher.demo@skrcollege.local / ${teacherPass}`);
+  console.log(`  Student     : skr2025001@student.skrcollege.local / ${studentPass}`);
+  console.log(`  Parent      : parent.demo@skrcollege.local / ${parentPass}`);
+  console.log(
+    "\n⚠️  The teacher/student/parent accounts are FICTIONAL demo accounts for a staging " +
+      "database only. Do not run this seed script against the production database, and never " +
+      "commit these passwords anywhere."
+  );
 }
 
 main()
