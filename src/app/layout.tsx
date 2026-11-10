@@ -1,22 +1,23 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://skr-inter-college.vercel.app"),
   title: {
-    default: "SKR IC | S.K.R. INTER COLLEGE & PVT ITI",
-    template: "%s | SKR IC",
+    default: "S.K.R. INTER COLLEGE & PVT ITI | Bah, Agra (UPMSP: 011424)",
+    template: "%s | S.K.R. INTER COLLEGE",
   },
   description:
-    "S.K.R. INTER COLLEGE & PVT ITI, Udaypur Khalsa, Bah, Pinahat, Agra — Quality education for High School, Intermediate and ITI programmes.",
-  keywords: ["SKR IC", "SKR Inter College", "Agra", "UP Board", "ITI", "Bah", "Pinahat"],
+    "S.K.R. INTER COLLEGE & S.K.R. PVT ITI, Udaypur Khalsa, Post Bhadrauli, Bah, Pinahat, Agra, Uttar Pradesh – 283113. Quality UP Board High School, Intermediate and ITI vocational education.",
+  keywords: ["SKR IC", "SKR Inter College", "Agra", "UP Board", "ITI", "Bah", "Pinahat", "011424", "UDISE 09181302903"],
   authors: [{ name: "S.K.R. INTER COLLEGE" }],
   openGraph: {
-    title: "SKR IC — S.K.R. INTER COLLEGE & PVT ITI",
-    description: "Quality education in Agra, Uttar Pradesh",
+    title: "S.K.R. INTER COLLEGE & PVT ITI — Agra, Uttar Pradesh",
+    description: "Quality Education for High School, Intermediate & ITI in Agra",
     type: "website",
     locale: "en_IN",
-    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "SKR IC" }],
+    images: [{ url: "/logo.png", width: 512, height: 512, alt: "S.K.R. Inter College Official Emblem" }],
   },
   robots: {
     index: true,
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#c8102e",
+  themeColor: "#0f2744",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -52,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -61,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png" />
       </head>
-      <body className="min-h-screen antialiased font-[Inter,'Noto_Sans_Devanagari',system-ui,sans-serif]">
+      <body className="min-h-screen antialiased bg-[#fdfdfd] text-slate-900 font-['Inter',system-ui,sans-serif]">
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -7,7 +7,7 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
 
   return (
     <div
-      className={`inline-flex items-center rounded-full border border-slate-200 bg-slate-100 p-0.5 text-xs font-semibold ${
+      className={`inline-flex items-center rounded-full border border-slate-300 bg-slate-100 p-0.5 text-xs font-semibold ${
         compact ? "" : "shadow-sm"
       }`}
       role="group"
@@ -16,10 +16,10 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
       <button
         type="button"
         onClick={() => setLocale("en")}
-        className={`rounded-full px-2.5 py-1 transition ${
+        className={`rounded-full px-2.5 py-1 text-xs font-bold transition ${
           locale === "en"
-            ? "bg-white text-[#c8102e] shadow-sm"
-            : "text-slate-500 hover:text-slate-800"
+            ? "bg-[#0f2744] text-white shadow-sm"
+            : "text-slate-600 hover:text-slate-900"
         }`}
       >
         EN
@@ -27,10 +27,10 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
       <button
         type="button"
         onClick={() => setLocale("hi")}
-        className={`rounded-full px-2.5 py-1 transition ${
+        className={`rounded-full px-2.5 py-1 text-xs font-bold transition ${
           locale === "hi"
-            ? "bg-white text-[#c8102e] shadow-sm"
-            : "text-slate-500 hover:text-slate-800"
+            ? "bg-[#0f2744] text-white shadow-sm"
+            : "text-slate-600 hover:text-slate-900"
         }`}
       >
         हिं

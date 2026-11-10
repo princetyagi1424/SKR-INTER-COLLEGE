@@ -258,6 +258,8 @@ export const officialLinks = [
 ];
 
 export const galleryImages = [
+  { title: "Main Campus Gate (उदयपुर खालसा, बाह, आगरा)", src: "/images/campus-gate.jpg" },
+  { title: "Official College Emblem (Maa Saraswati)", src: "/logo.png" },
   { title: "School building", src: UPMSP_IMG("011424_ALLSCHOOLWEBSITE_01_SchoolBuilding.jpg") },
   { title: "School gate", src: UPMSP_IMG("011424_ALLSCHOOLWEBSITE_02_SchoolGate.jpg") },
   { title: "Principal room", src: UPMSP_IMG("011424_ALLSCHOOLWEBSITE_03_PrincipalRoom.jpeg") },
