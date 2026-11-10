@@ -31,10 +31,9 @@ export async function GET(req: NextRequest) {
               token: payload.sid as string,
               userId: payload.sub as string,
               expiresAt: { gt: new Date() },
-              revokedAt: null,
             },
           });
-          sessionFound = !!row;
+          sessionFound = !!row && !row.revokedAt;
         }
       } else {
         jwtError = "JWT_SECRET missing or too short";
