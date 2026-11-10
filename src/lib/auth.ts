@@ -84,7 +84,6 @@ export async function createSession(
     expires: expiresAt,
   });
 
-  // Return jwt so login Route Handler can attach Set-Cookie on NextResponse
   return { token, expiresAt, jwt };
 }
 
@@ -101,12 +100,13 @@ export async function getSession(): Promise<SessionUser | null> {
     const sessionToken = payload.sid as string;
     if (!sessionToken) return null;
 
-    const session = await prisma.session.findFirst({
+    // Note: on MongoDB, filtering `revokedAt: null` can miss docs where the
+    // field is absent. Load by token+userId and filter in application code.
+    let session = await prisma.session.findFirst({
       where: {
         token: sessionToken,
         userId,
         expiresAt: { gt: new Date() },
-        revokedAt: null,
       },
       include: {
         user: {
@@ -124,7 +124,32 @@ export async function getSession(): Promise<SessionUser | null> {
       },
     });
 
+    // Fallback: token-only lookup (handles rare userId type/string mismatches)
+    if (!session) {
+      session = await prisma.session.findFirst({
+        where: {
+          token: sessionToken,
+          expiresAt: { gt: new Date() },
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              phone: true,
+              role: true,
+              firstName: true,
+              lastName: true,
+              displayName: true,
+              status: true,
+            },
+          },
+        },
+      });
+    }
+
     if (!session?.user) return null;
+    if (session.revokedAt) return null;
     if (session.user.status !== UserStatus.ACTIVE) return null;
 
     return {
