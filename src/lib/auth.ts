@@ -100,66 +100,42 @@ export async function getSession(): Promise<SessionUser | null> {
     const sessionToken = payload.sid as string;
     if (!sessionToken) return null;
 
-    // Note: on MongoDB, filtering `revokedAt: null` can miss docs where the
-    // field is absent. Load by token+userId and filter in application code.
     let session = await prisma.session.findFirst({
       where: {
         token: sessionToken,
-        userId,
         expiresAt: { gt: new Date() },
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            phone: true,
-            role: true,
-            firstName: true,
-            lastName: true,
-            displayName: true,
-            status: true,
-          },
-        },
       },
     });
 
-    // Fallback: token-only lookup (handles rare userId type/string mismatches)
-    if (!session) {
-      session = await prisma.session.findFirst({
-        where: {
-          token: sessionToken,
-          expiresAt: { gt: new Date() },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              email: true,
-              phone: true,
-              role: true,
-              firstName: true,
-              lastName: true,
-              displayName: true,
-              status: true,
-            },
-          },
-        },
-      });
-    }
-
-    if (!session?.user) return null;
+    if (!session) return null;
     if (session.revokedAt) return null;
-    if (session.user.status !== UserStatus.ACTIVE) return null;
+
+    const uid = session.userId || userId;
+    const user = await prisma.user.findUnique({
+      where: { id: uid },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        role: true,
+        firstName: true,
+        lastName: true,
+        displayName: true,
+        status: true,
+      },
+    });
+
+    if (!user) return null;
+    if (user.status !== UserStatus.ACTIVE) return null;
 
     return {
-      id: session.user.id,
-      email: session.user.email,
-      phone: session.user.phone,
-      role: session.user.role,
-      firstName: session.user.firstName,
-      lastName: session.user.lastName,
-      displayName: session.user.displayName,
+      id: user.id,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      displayName: user.displayName,
     };
   } catch (err) {
     console.error("[getSession] error:", err instanceof Error ? err.message : err);
