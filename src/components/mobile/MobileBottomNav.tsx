@@ -27,7 +27,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-[#efe6dc] bg-[#fff8f0]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
       aria-label="App navigation"
     >
       <div className="mx-auto flex max-w-lg items-stretch justify-between px-1 pt-1">
@@ -39,10 +39,10 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-2 text-[10px] font-semibold transition ${
-                active ? "text-[#c8102e]" : "text-slate-500"
+                active ? "text-[#c8102e]" : "text-slate-400 hover:text-slate-700"
               }`}
             >
-              <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${active ? "bg-[#fff0f1]" : ""}`}>
+              <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${active ? "bg-[#fef2f2]" : ""}`}>
                 <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 2} />
               </span>
               {item.label}
