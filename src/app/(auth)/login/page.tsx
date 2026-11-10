@@ -45,17 +45,14 @@ export default function LoginPage() {
         return;
       }
       const role = data.user?.role;
-      if (STAFF_ROLES.includes(role)) {
-        router.push("/admin/dashboard");
-      } else if (role === "TEACHER") {
-        router.push("/teacher/dashboard");
-      } else if (role === "STUDENT") {
-        router.push("/student/dashboard");
-      } else if (role === "PARENT") {
-        router.push("/parent/dashboard");
-      } else {
-        router.push("/");
-      }
+      let dest = "/";
+      if (STAFF_ROLES.includes(role)) dest = "/admin/dashboard";
+      else if (role === "TEACHER") dest = "/teacher/dashboard";
+      else if (role === "STUDENT") dest = "/student/dashboard";
+      else if (role === "PARENT") dest = "/parent/dashboard";
+      // Hard navigation ensures the session cookie is sent on the next request
+      window.location.assign(dest);
+      return;
     } catch {
       setError(
         locale === "hi"
@@ -69,7 +66,6 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-100 px-4 py-8">
-      {/* Top Bar with Language and Back */}
       <header className="absolute top-4 left-4 right-4 flex items-center justify-between max-w-4xl mx-auto">
         <Link
           href="/"
@@ -83,7 +79,6 @@ export default function LoginPage() {
       </header>
 
       <div className="w-full max-w-md pt-12 sm:pt-6">
-        {/* Main Card */}
         <div className="rounded-3xl bg-white p-7 sm:p-9 shadow-xl shadow-slate-200/60 border border-slate-200/80">
           <div className="mb-6 text-center">
             <div className="relative mx-auto mb-3 h-20 w-20 rounded-full bg-amber-50/50 p-1 shadow-md ring-2 ring-amber-300">
