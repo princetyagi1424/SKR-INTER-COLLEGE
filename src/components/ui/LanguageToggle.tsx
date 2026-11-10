@@ -7,7 +7,7 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
 
   return (
     <div
-      className={`inline-flex items-center rounded-full border border-white/20 bg-black/20 p-0.5 text-xs font-semibold backdrop-blur-sm ${
+      className={`inline-flex items-center rounded-full border border-slate-200 bg-slate-100 p-0.5 text-xs font-semibold ${
         compact ? "" : "shadow-sm"
       }`}
       role="group"
@@ -18,8 +18,8 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
         onClick={() => setLocale("en")}
         className={`rounded-full px-2.5 py-1 transition ${
           locale === "en"
-            ? "bg-white text-[#c8102e] shadow"
-            : "text-white/80 hover:text-white"
+            ? "bg-white text-[#c8102e] shadow-sm"
+            : "text-slate-500 hover:text-slate-800"
         }`}
       >
         EN
@@ -29,8 +29,8 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
         onClick={() => setLocale("hi")}
         className={`rounded-full px-2.5 py-1 transition ${
           locale === "hi"
-            ? "bg-white text-[#c8102e] shadow"
-            : "text-white/80 hover:text-white"
+            ? "bg-white text-[#c8102e] shadow-sm"
+            : "text-slate-500 hover:text-slate-800"
         }`}
       >
         हिं
