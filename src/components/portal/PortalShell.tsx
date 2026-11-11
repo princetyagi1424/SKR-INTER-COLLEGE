@@ -4,8 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { LogOut, Menu, X } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { LanguageToggle } from "@/components/ui/LanguageToggle";
+import type { TranslationKey } from "@/lib/i18n";
 
-export type PortalNavItem = { href: string; label: string };
+export type PortalNavItem = {
+  href: string;
+  labelKey?: TranslationKey;
+  label?: string;
+};
 
 export function PortalShell({
   title,
@@ -21,6 +28,7 @@ export function PortalShell({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const { t } = useLanguage();
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -39,6 +47,11 @@ export function PortalShell({
 
   const bottom = nav.slice(0, 4);
 
+  function itemLabel(item: PortalNavItem) {
+    if (item.labelKey) return t(item.labelKey);
+    return item.label || item.href;
+  }
+
   return (
     <div className="portal-app-shell min-h-screen bg-[#fff8f0]">
       <div className="mx-auto flex min-h-screen max-w-[1440px]">
@@ -52,20 +65,22 @@ export function PortalShell({
               SKR
             </div>
             <div>
-              <div className="text-sm font-bold text-[#1a1a1a]">EduSKR</div>
-              <div className="text-[10px] font-medium uppercase tracking-wide text-[#c8102e]">Portal</div>
+              <div className="text-sm font-bold text-[#1a1a1a]">{t("eduPortal")}</div>
+              <div className="text-[10px] font-medium uppercase tracking-wide text-[#c8102e]">
+                {t("portalWord")}
+              </div>
             </div>
             <button
               type="button"
               className="ml-auto rounded-lg p-1.5 text-slate-400 hover:bg-[#fff0f1] lg:hidden"
               onClick={() => setOpen(false)}
-              aria-label="Close menu"
+              aria-label={t("closeMenu")}
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <nav className="flex-1 space-y-0.5 overflow-y-auto p-3" aria-label="Portal">
+          <nav className="flex-1 space-y-0.5 overflow-y-auto p-3" aria-label={t("portalWord")}>
             {nav.map((item) => {
               const active =
                 pathname === item.href ||
@@ -81,13 +96,16 @@ export function PortalShell({
                       : "text-slate-600 hover:bg-[#f5ede3] hover:text-[#1a1a1a]"
                   }`}
                 >
-                  {item.label}
+                  {itemLabel(item)}
                 </Link>
               );
             })}
           </nav>
 
-          <div className="border-t border-[#efe6dc] p-3">
+          <div className="border-t border-[#efe6dc] p-3 space-y-2">
+            <div className="px-1">
+              <LanguageToggle />
+            </div>
             <button
               type="button"
               onClick={handleLogout}
@@ -95,7 +113,7 @@ export function PortalShell({
               className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 hover:bg-[#fff0f1] hover:text-[#c8102e] disabled:opacity-60"
             >
               <LogOut className="h-4 w-4" />
-              {loggingOut ? "Logging out…" : "Logout"}
+              {loggingOut ? t("loggingOut") : t("logout")}
             </button>
           </div>
         </aside>
@@ -104,7 +122,7 @@ export function PortalShell({
           <button
             type="button"
             className="fixed inset-0 z-40 bg-black/30 lg:hidden"
-            aria-label="Close overlay"
+            aria-label={t("closeMenu")}
             onClick={() => setOpen(false)}
           />
         )}
@@ -116,7 +134,7 @@ export function PortalShell({
                 type="button"
                 className="rounded-xl p-2 text-slate-600 hover:bg-white lg:hidden"
                 onClick={() => setOpen(true)}
-                aria-label="Open menu"
+                aria-label={t("openMenu")}
               >
                 <Menu className="h-5 w-5" />
               </button>
@@ -126,55 +144,48 @@ export function PortalShell({
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Link href="/" className="hidden text-xs font-semibold text-[#c8102e] hover:underline sm:inline">
-                Public website
+              <LanguageToggle compact />
+              <Link
+                href="/"
+                className="hidden text-xs font-semibold text-[#c8102e] hover:underline sm:inline"
+              >
+                {t("publicWebsite")}
               </Link>
               <button
                 type="button"
                 onClick={handleLogout}
                 disabled={loggingOut}
-                className="rounded-full border border-[#efe6dc] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-[#fff0f1] disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-[#efe6dc] hover:text-[#c8102e] disabled:opacity-60"
               >
-                {loggingOut ? "…" : "Logout"}
+                <LogOut className="h-3.5 w-3.5" />
+                {loggingOut ? t("loggingOut") : t("logout")}
               </button>
             </div>
           </header>
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+
+          <main className="flex-1 px-4 py-5 sm:px-6 sm:py-6">{children}</main>
+
+          <nav className="fixed bottom-0 left-0 right-0 z-40 flex border-t border-[#efe6dc] bg-white/95 backdrop-blur lg:hidden">
+            {bottom.map((item) => {
+              const active =
+                pathname === item.href ||
+                (item.href !== "/" && pathname.startsWith(item.href + "/"));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold ${
+                    active ? "text-[#c8102e]" : "text-slate-500"
+                  }`}
+                >
+                  <span className="max-w-[4.5rem] truncate">{itemLabel(item)}</span>
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="h-14 lg:hidden" />
         </div>
       </div>
-
-      <nav
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-[#efe6dc] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
-        aria-label="Portal quick nav"
-      >
-        <div className="mx-auto flex max-w-lg items-stretch justify-between px-1 pt-1">
-          {bottom.map((item) => {
-            const active =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href + "/"));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[10px] font-semibold ${
-                  active ? "text-[#c8102e]" : "text-slate-500"
-                }`}
-              >
-                <span className={`h-1 w-6 rounded-full ${active ? "bg-[#c8102e]" : "bg-transparent"}`} />
-                <span className="truncate">{item.label}</span>
-              </Link>
-            );
-          })}
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[10px] font-semibold text-slate-500"
-          >
-            <span className="h-1 w-6 rounded-full bg-transparent" />
-            <span>More</span>
-          </button>
-        </div>
-      </nav>
     </div>
   );
 }
