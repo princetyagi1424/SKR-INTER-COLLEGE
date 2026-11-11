@@ -1,6 +1,7 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://skr-inter-college.vercel.app"),
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen antialiased bg-[#fdfdfd] text-slate-900 font-['Inter',system-ui,sans-serif]">
         <AppProviders>{children}</AppProviders>
+        <Analytics />
       </body>
     </html>
   );
