@@ -29,7 +29,7 @@ function recordSuccess(key: string) {
 }
 
 const SESSION_COOKIE = "skr_session";
-const SESSION_DAYS = 7;
+const SESSION_DAYS = 90;
 
 export async function POST(req: NextRequest) {
   try {
@@ -104,7 +104,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Explicit Set-Cookie on the response (fixes session not sticking on Vercel)
     if (session?.jwt) {
       const expiresAt = session.expiresAt ?? new Date(Date.now() + SESSION_DAYS * 86400000);
       res.cookies.set(SESSION_COOKIE, session.jwt, {
@@ -113,6 +112,7 @@ export async function POST(req: NextRequest) {
         sameSite: "lax",
         path: "/",
         expires: expiresAt,
+        maxAge: SESSION_DAYS * 24 * 60 * 60,
       });
     }
 
