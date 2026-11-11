@@ -1,11 +1,12 @@
-/* SKR College PWA service worker — v4 update-aware */
+/* SKR College PWA service worker — v4 force-update */
 const CACHE = "skr-app-v4";
 const PRECACHE = ["/", "/manifest.json", "/icons/icon-192.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting())
+    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE))
   );
+  // Do NOT skipWaiting here — wait for user to tap Update
 });
 
 self.addEventListener("activate", (event) => {
