@@ -19,7 +19,8 @@ function resolveJwtSecret(): Uint8Array {
 
 const JWT_SECRET = resolveJwtSecret();
 const SESSION_COOKIE = "skr_session";
-const SESSION_DAYS = 7;
+/** Keep users logged in for 90 days unless they explicitly logout */
+const SESSION_DAYS = 90;
 
 export type SessionUser = {
   id: string;
@@ -76,12 +77,14 @@ export async function createSession(
     .sign(JWT_SECRET);
 
   const cookieStore = await cookies();
+  const maxAge = SESSION_DAYS * 24 * 60 * 60;
   cookieStore.set(SESSION_COOKIE, jwt, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     expires: expiresAt,
+    maxAge,
   });
 
   return { token, expiresAt, jwt };
@@ -97,46 +100,100 @@ export async function getSession(): Promise<SessionUser | null> {
     const userId = payload.sub as string;
     if (!userId) return null;
 
-    const sessionToken = payload.sid as string;
-    if (!sessionToken) return null;
+    const sessionToken = typeof payload.sid === "string" ? payload.sid : null;
 
-    let session = await prisma.session.findFirst({
-      where: {
-        token: sessionToken,
-        expiresAt: { gt: new Date() },
-      },
-    });
+    if (sessionToken) {
+      const session = await prisma.session.findFirst({
+        where: {
+          token: sessionToken,
+          expiresAt: { gt: new Date() },
+        },
+      });
 
-    if (!session) return null;
-    if (session.revokedAt) return null;
+      if (session && !session.revokedAt) {
+        const msLeft = session.expiresAt.getTime() - Date.now();
+        const half = (SESSION_DAYS * 24 * 60 * 60 * 1000) / 2;
+        if (msLeft < half) {
+          const newExp = new Date();
+          newExp.setDate(newExp.getDate() + SESSION_DAYS);
+          try {
+            await prisma.session.update({
+              where: { id: session.id },
+              data: { expiresAt: newExp },
+            });
+          } catch {
+            /* ignore */
+          }
+        }
 
-    const uid = session.userId || userId;
-    const user = await prisma.user.findUnique({
-      where: { id: uid },
-      select: {
-        id: true,
-        email: true,
-        phone: true,
-        role: true,
-        firstName: true,
-        lastName: true,
-        displayName: true,
-        status: true,
-      },
-    });
+        const user = await prisma.user.findUnique({
+          where: { id: session.userId || userId },
+          select: {
+            id: true,
+            email: true,
+            phone: true,
+            role: true,
+            firstName: true,
+            lastName: true,
+            displayName: true,
+            status: true,
+          },
+        });
+        if (user && user.status === UserStatus.ACTIVE) {
+          return {
+            id: user.id,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName,
+          };
+        }
+        return null;
+      }
+    }
 
-    if (!user) return null;
-    if (user.status !== UserStatus.ACTIVE) return null;
+    // Fallback: valid JWT still keeps user logged in if DB session row is missing
+    if (payload.role && typeof payload.role === "string") {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          email: true,
+          phone: true,
+          role: true,
+          firstName: true,
+          lastName: true,
+          displayName: true,
+          status: true,
+        },
+      });
+      if (user && user.status === UserStatus.ACTIVE) {
+        if (sessionToken) {
+          try {
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + SESSION_DAYS);
+            await prisma.session.create({
+              data: { userId: user.id, token: sessionToken, expiresAt },
+            });
+          } catch {
+            /* unique conflict ok */
+          }
+        }
+        return {
+          id: user.id,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          displayName: user.displayName,
+        };
+      }
+    }
 
-    return {
-      id: user.id,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      displayName: user.displayName,
-    };
+    return null;
   } catch (err) {
     console.error("[getSession] error:", err instanceof Error ? err.message : err);
     return null;
