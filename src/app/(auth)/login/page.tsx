@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
@@ -26,6 +26,30 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include", cache: "no-store" });
+        if (!res.ok || cancelled) return;
+        const data = await res.json();
+        const role = data.user?.role;
+        if (!role) return;
+        let dest = "/";
+        if (STAFF_ROLES.includes(role)) dest = "/admin/dashboard";
+        else if (role === "TEACHER") dest = "/teacher/dashboard";
+        else if (role === "STUDENT") dest = "/student/dashboard";
+        else if (role === "PARENT") dest = "/parent/dashboard";
+        window.location.replace(dest);
+      } catch {
+        /* stay on login */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
