@@ -1,5 +1,5 @@
-/* SKR College PWA service worker — v3 session-safe */
-const CACHE = "skr-app-v3";
+/* SKR College PWA service worker — v4 update-aware */
+const CACHE = "skr-app-v4";
 const PRECACHE = ["/", "/manifest.json", "/icons/icon-192.png"];
 
 self.addEventListener("install", (event) => {
@@ -14,6 +14,12 @@ self.addEventListener("activate", (event) => {
       Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("fetch", (event) => {

@@ -2,13 +2,16 @@
 
 import { LanguageProvider } from "@/context/LanguageContext";
 import { SplashScreen } from "@/components/mobile/SplashScreen";
+import { PwaProvider } from "@/components/mobile/PwaProvider";
 import type { ReactNode } from "react";
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <LanguageProvider>
-      <SplashScreen />
-      {children}
+      <PwaProvider>
+        <SplashScreen />
+        {children}
+      </PwaProvider>
     </LanguageProvider>
   );
 }
