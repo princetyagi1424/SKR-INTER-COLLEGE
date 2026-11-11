@@ -96,7 +96,7 @@ const en: HomeCopy = {
   boardExamRecord: "Board Exam Record",
   cctvSurveillance: "CCTV Surveillance",
   mainCampusGate: "Main Campus Gate",
-  campusGateCaption: "एस.के.आर. इण्टर कॉलेज, उदयपुर (खालसा) बाह (आगरा)",
+  campusGateCaption: "S.K.R. Inter College, Udaypur (Khalsa), Bah (Agra)",
   upBoard: "UP Board",
   affiliation: "Affiliation",
   pvtIti: "PVT ITI",

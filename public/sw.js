@@ -1,5 +1,5 @@
-/* SKR College PWA service worker — v5 bilingual + force-update */
-const CACHE = "skr-app-v5";
+/* SKR College PWA service worker — v6 audit fixes */
+const CACHE = "skr-app-v6";
 const PRECACHE = ["/", "/manifest.json", "/icons/icon-192.png"];
 
 self.addEventListener("install", (event) => {
