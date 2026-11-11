@@ -1,3 +1,5 @@
+import { extraTranslations, type ExtraTranslationKey } from "./i18n-extra";
+
 export type Locale = "en" | "hi";
 
 export const translations = {
@@ -379,8 +381,15 @@ export const translations = {
   },
 } as const;
 
-export type TranslationKey = keyof typeof translations.en;
+export type TranslationKey = keyof typeof translations.en | ExtraTranslationKey;
 
 export function t(locale: Locale, key: TranslationKey): string {
-  return translations[locale][key] ?? translations.en[key] ?? key;
+  const fromMain =
+    (translations[locale] as Record<string, string>)[key as string] ??
+    (translations.en as Record<string, string>)[key as string];
+  if (fromMain) return fromMain;
+  const fromExtra =
+    (extraTranslations[locale] as Record<string, string>)[key as string] ??
+    (extraTranslations.en as Record<string, string>)[key as string];
+  return fromExtra ?? (key as string);
 }
